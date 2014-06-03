@@ -35,6 +35,8 @@ extern inline void setPixelRGB(int, int, unsigned char, unsigned char, unsigned 
 extern void drawSprite(unsigned short*, int, int);
 extern void drawSpritePart(unsigned short*, int, int, Rect);
 extern void drawSpriteRotated(unsigned short*, Rect, Fixed);
+void drawLine(int, int, int, int, uint8_t, uint8_t, uint8_t)
+extern void drawPolygon(uint8_t, uint8_t, uint8_t, int, ...);
 
 #define BUFF_BASE_ADDRESS doubleBuf[currentBuf]
 #define BUFF_BYTES_SIZE (320*240*2)
