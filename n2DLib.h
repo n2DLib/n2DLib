@@ -19,6 +19,8 @@ typedef struct
 
 #define fixsin(x) fixcos((x) - 64)
 
+extern "C" {
+
 extern Fixed fixcos(Fixed angle);
 extern void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out);
 
@@ -42,5 +44,7 @@ extern void fillEllipse(int, int, int, int, uint8_t, uint8_t, uint8_t);
 
 #define BUFF_BYTES_SIZE (320*240*2)
 #define ScreenBuffer unsigned short
+extern ScreenBuffer* BUFF_BASE_ADDRESS;
+}
 
 #endif

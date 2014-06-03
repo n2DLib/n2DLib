@@ -2,9 +2,9 @@
 
 extern "C" {
 
-// Double-buffering
+// Buffering
 
-ScreenBuffer *BUFF_BASE_ADDRESS;
+ScreenBuffer* BUFF_BASE_ADDRESS;
 
 int initBuffering()
 {
