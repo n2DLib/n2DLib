@@ -41,5 +41,6 @@ extern void fillCircle(int, int, int, uint8_t, uint8_t, uint8_t);
 extern void fillEllipse(int, int, int, int, uint8_t, uint8_t, uint8_t);
 
 #define BUFF_BYTES_SIZE (320*240*2)
+#define ScreenBuffer unsigned short
 
 #endif
