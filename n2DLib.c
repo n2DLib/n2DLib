@@ -227,3 +227,21 @@ void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int nombreDePoints, ...)
 	va_end(ap);
 	free(pointsList);
 }
+
+void fillCircle(int x, int y, int radius, uint8_t r, uint8_t g, uint8_t b)
+{
+	int i,j;
+	for(j=-radius; j<=radius; j++)
+		for(i=-radius; i<=radius; i++)
+			if(i*i+j*j <= radius*radius)
+				setPixelRGB(x + i, y + j, r, g, b);
+}
+
+void fillEllipse(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b)
+{
+	int i,j;
+	for(j=-h; j<=h; j++) 
+		for(i=-w; i<=w; i++)
+			if(i*i*h*h+j*j*w*w <= h*h*w*w)
+				setPixelRGB(x + i, y + j, r, g, b);
+}
