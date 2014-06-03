@@ -25,22 +25,17 @@ extern void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out);
 extern int currentBuf;
 extern unsigned short *doubleBuf[2];
 
-extern int initDoubleBuff();
-extern void switchBuffers();
-extern void switchBuffersRestore();
-extern void deinitDoubleBuff();
-extern inline void clearBuffer();
-extern inline void setPixel(int, int, unsigned short);
-extern inline void setPixelRGB(int, int, unsigned char, unsigned char, unsigned char);
+extern int initBuffering();
+extern inline void updateScreen();
+extern void deinitBuffering();
+extern void clearBuffer(unsigned short);
+extern inline void setPixelUnsafe(unsigned int, unsigned int, unsigned short);
+extern inline void setPixel(unsigned int, unsigned int, unsigned short);
+extern inline void setPixelRGB(unsigned int, unsigned int, unsigned char, unsigned char, unsigned char);
 extern void drawSprite(unsigned short*, int, int);
 extern void drawSpritePart(unsigned short*, int, int, Rect);
 extern void drawSpriteRotated(unsigned short*, Rect, Fixed);
-extern void drawLine(int, int, int, int, uint8_t, uint8_t, uint8_t)
-extern void drawPolygon(uint8_t, uint8_t, uint8_t, int, ...);
-extern void fillCircle(int, int, int, uint8_t, uint8_t, uint8_t);
-extern void fillEllipse(int, int, int, int, uint8_t, uint8_t, uint8_t);
 
-#define BUFF_BASE_ADDRESS doubleBuf[currentBuf]
 #define BUFF_BYTES_SIZE (320*240*2)
 
 #endif

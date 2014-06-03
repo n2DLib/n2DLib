@@ -2,43 +2,28 @@
 
 // Double-buffering
 
-int currentBuf = 0;
-void *bufferBackup;
-unsigned short *doubleBuf[2];
+unsigned short *BUFF_BASE_ADDRESS;
 
-int initDoubleBuff()
+int initBuffering()
 {
-	bufferBackup = (void*)SCREEN_BASE_ADDRESS;
-	// Sets the monochrome screen to 16-bits
 	if(!has_colors)
 		*(int32_t*)0xC000001C = (*((int32_t*)0xC000001C) & ~0b1110) | 0b1000;
-	doubleBuf[0] = (unsigned short*)malloc(BUFF_BYTES_SIZE);
-	doubleBuf[1] = (unsigned short*)malloc(BUFF_BYTES_SIZE);
+	BUFF_BASE_ADDRESS = (unsigned short*)malloc(BUFF_BYTES_SIZE);
 	
-	return !doubleBuf[0] | !doubleBuf[1];
+	return !BUFF_BASE_ADDRESS;
 }
 
-void switchBuffersRestore()
+inline void updateScreen()
 {
-	memcpy(doubleBuf[currentBuf ^ 1], BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
-	*(unsigned short **)0xC0000010 = BUFF_BASE_ADDRESS;
-	currentBuf ^= 1;
+	memcpy(SCREEN_BASE_ADDRESS, BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
 }
 
-void switchBuffers()
-{
-	*(unsigned short **)0xC0000010 = BUFF_BASE_ADDRESS;
-	currentBuf ^= 1;
-}
-
-void deinitDoubleBuff()
+void deinitBuffering()
 {
 	// Sets the monochrome screen back to 4-bits
 	if(!has_colors)
 		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0b1110) | 0b0100;
-	*(void**)0xC0000010 = bufferBackup;
-	free(doubleBuf[0]);
-	free(doubleBuf[1]);
+	free(BUFF_BASE_ADDRESS);
 }
 
 // Maths
@@ -56,9 +41,19 @@ void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out)
 
 // Graphics
 
-inline void clearBuffer()
+void clearBuffer(unsigned short c)
 {
-	memset(BUFF_BASE_ADDRESS, 0, BUFF_BYTES_SIZE);
+	int i;
+	if(has_colors)
+		for(i = 0; i < BUFF_BYTES_SIZE >> 1; i++)
+			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
+	else
+	{
+		c = ~c;
+		c = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
+		for(i = 0; i < BUFF_BYTES_SIZE >> 1; i++)
+			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
+	}
 }
 
 inline unsigned short getPixel(unsigned short *src, int x, int y)
@@ -69,9 +64,20 @@ inline unsigned short getPixel(unsigned short *src, int x, int y)
 		return src[2];
 }
 
-inline void setPixel(int x, int y, unsigned short c)
+inline void setPixelUnsafe(unsigned int x, unsigned int y, unsigned short c)
 {
-	if(x >= 0 && x < 320 && y >= 0 && y < 240)
+	if(has_colors)
+		*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
+	else
+	{
+		c = ~c;
+		*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
+	}
+}
+
+inline void setPixel(unsigned int x, unsigned int y, unsigned short c)
+{
+	if(x < 320 && y < 240)
 	{
 		if(has_colors)
 			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
@@ -83,9 +89,9 @@ inline void setPixel(int x, int y, unsigned short c)
 	}
 }
 
-inline void setPixelRGB(int x, int y, unsigned char r, unsigned char g, unsigned char b)
+inline void setPixelRGB(unsigned int x, unsigned int y, unsigned char r, unsigned char g, unsigned char b)
 {
-	if(x >= 0 && x < 320 && y >= 0 && y < 240)
+	if(x < 320 && y < 240)
 	{
 		if(has_colors)
 			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
@@ -169,81 +175,4 @@ void drawSpriteRotated(unsigned short* source, Rect sr, Fixed angle)
 		lsp.x -= dY;
 		lsp.y += dX;
 	}
-}
-
-/*	     *
- *  Geometry *
- *           */
- 
-void drawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
-{
-	int dx = abs(x2-x1);
-	int dy = abs(y2-y1);
-	int sx = (x1 < x2)?1:-1;
-	int sy = (y1 < y2)?1:-1;
-	int err = dx-dy;
-	int e2;
-
-	while (!(x1 == x2 && y1 == y2))
-	{
-		setPixelRGB(x1,y1,r,g,b);
-		e2 = 2*err;
-		if (e2 > -dy)
-		{		 
-			err = err - dy;
-			x1 = x1 + sx;
-		}
-		if (e2 < dx)
-		{		 
-			err = err + dx;
-			y1 = y1 + sy;
-		}
-	}
-}
-
-void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int nombreDePoints, ...)
-// r, g, b, <number of points you want (4 for a square, for instance, not 8 because of x and y...)>, <x1,y1,x2,y2...>
-{
-	// the number of arguments in the <...> must be even
-	int i;
-	int* pointsList = malloc(nombreDePoints*2*sizeof(int));
-	
-	va_list ap;
-	int cur_arg = 1;
-
-	va_start(ap, nombreDePoints);
-	
-	for (i = 0; i < nombreDePoints*2; i++)
-	{
-		cur_arg = va_arg(ap, int);
-		*(pointsList + i) = cur_arg;
-	}
-	
-	for (i = 0; i < nombreDePoints*2 - 2; i+=2)
-	{
-		drawLine(*(pointsList + i), *(pointsList + i + 1), *(pointsList + i + 2), *(pointsList + i + 3), r, g, b);
-	}
-	drawLine(*(pointsList + nombreDePoints*2 - 2), *(pointsList + nombreDePoints*2 - 1), *(pointsList), *(pointsList + 1), r, g, b);
-	va_end(ap);
-	free(pointsList);
-}
-
-void fillCircle(int x, int y, int radius, uint8_t r, uint8_t g, uint8_t b)
-{
-	int i,j;
-	for(j=-radius; j<=radius; j++)
-		for(i=-radius; i<=radius; i++)
-			if(i*i+j*j <= radius*radius)
-				setPixelRGB(x + i, y + j, r, g, b);               
-}
-
-/*  /!\ for circle and ellispe, the x and y must be the center of the shape, not the top-left point   /!\  */
-
-void fillEllipse(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b)
-{
-	int i,j;
-	for(j=-h; j<=h; j++) 
-		for(i=-w; i<=w; i++)
-			if(i*i*h*h+j*j*w*w <= h*h*w*w)
-				setPixelRGB(x + i, y + j, r, g, b);
 }
