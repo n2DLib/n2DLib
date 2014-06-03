@@ -18,16 +18,16 @@ int initDoubleBuff()
 	return !doubleBuf[0] | !doubleBuf[1];
 }
 
-void switchBuffers()
-{
-	*(unsigned short **)0xC0000010 = doubleBuf[currentBuf];
-	currentBuf ^= 1;
-}
-
 void switchBuffersRestore()
 {
 	memcpy(doubleBuf[currentBuf ^ 1], BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
-	*(unsigned short **)0xC0000010 = doubleBuf[currentBuf];
+	*(unsigned short **)0xC0000010 = BUFF_BASE_ADDRESS;
+	currentBuf ^= 1;
+}
+
+void switchBuffers()
+{
+	*(unsigned short **)0xC0000010 = BUFF_BASE_ADDRESS;
 	currentBuf ^= 1;
 }
 
