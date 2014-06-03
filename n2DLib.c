@@ -204,7 +204,7 @@ void drawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int nombreDePoints, ...)
 // r, g, b, <number of points you want (4 for a square, for instance, not 8 because of x and y...)>, <x1,y1,x2,y2...>
 {
-	if (nombreDePoints&1) return;
+	// the number of arguments in the <...> must be even!
 	int i;
 	int* pointsList = malloc(nombreDePoints*2*sizeof(int));
 	
