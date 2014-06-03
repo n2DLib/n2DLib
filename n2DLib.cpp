@@ -8,7 +8,7 @@ ScreenBuffer *BUFF_BASE_ADDRESS;
 
 int initBuffering()
 {
-	if(!has_colors)
+	if(is_classic)
 		*(int32_t*)0xC000001C = (*((int32_t*)0xC000001C) & ~0b1110) | 0b1000;
 	BUFF_BASE_ADDRESS = (ScreenBuffer*)malloc(BUFF_BYTES_SIZE);
 	
@@ -23,7 +23,7 @@ inline void updateScreen()
 void deinitBuffering()
 {
 	// Sets the monochrome screen back to 4-bits
-	if(!has_colors)
+	if(is_classic)
 		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0b1110) | 0b0100;
 	free(BUFF_BASE_ADDRESS);
 }
