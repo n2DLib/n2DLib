@@ -1,3 +1,4 @@
+======
 n2DLib
 ======
 
@@ -11,3 +12,4 @@ This library provides the following features as of now :
     [x] Sprite-level functions
     [x] Fixed-point maths routines (24.8)
     [x] Compatible with monochrome and color screens at once
+    [x] Drawing functions (really few for the moment)
