@@ -35,6 +35,10 @@ extern inline void setPixelRGB(unsigned int, unsigned int, unsigned char, unsign
 extern void drawSprite(unsigned short*, int, int);
 extern void drawSpritePart(unsigned short*, int, int, Rect);
 extern void drawSpriteRotated(unsigned short*, Rect, Fixed);
+extern void drawLine(int, int, int, int, uint8_t, uint8_t, uint8_t);
+extern void drawPolygon(uint8_t, uint8_t, uint8_t, int, ...);
+extern void fillCircle(int, int, int, uint8_t, uint8_t, uint8_t);
+extern void fillEllipse(int, int, int, int, uint8_t, uint8_t, uint8_t);
 
 #define BUFF_BYTES_SIZE (320*240*2)
 
