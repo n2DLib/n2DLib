@@ -33,6 +33,7 @@ extern inline void clearBuffer();
 extern inline void setPixel(int, int, unsigned short);
 extern inline void setPixelRGB(int, int, unsigned char, unsigned char, unsigned char);
 extern void drawSprite(unsigned short*, int, int);
+extern void drawSpritePart(unsigned short*, int, int, Rect);
 extern void drawSpriteRotated(unsigned short*, Rect, Fixed);
 
 #define BUFF_BASE_ADDRESS doubleBuf[currentBuf]
