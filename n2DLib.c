@@ -170,3 +170,60 @@ void drawSpriteRotated(unsigned short* source, Rect sr, Fixed angle)
 		lsp.y += dX;
 	}
 }
+
+/*	     *
+ *  Geometry *
+ *           */
+ 
+void drawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
+{
+	int dx = abs(x2-x1);
+	int dy = abs(y2-y1);
+	int sx = (x1 < x2)?1:-1;
+	int sy = (y1 < y2)?1:-1;
+	int err = dx-dy;
+	int e2;
+
+	while (!(x1 == x2 && y1 == y2))
+	{
+		setPixelRGB(x1,y1,r,g,b);
+		e2 = 2*err;
+		if (e2 > -dy)
+		{		 
+			err = err - dy;
+			x1 = x1 + sx;
+		}
+		if (e2 < dx)
+		{		 
+			err = err + dx;
+			y1 = y1 + sy;
+		}
+	}
+}
+
+void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int nombreDePoints, ...)
+// r, g, b, <number of points you want (4 for a square, for instance, not 8 because of x and y...)>, <x1,y1,x2,y2...>
+{
+	if (nombreDePoints&1) return;
+	int i;
+	int* pointsList = malloc(nombreDePoints*2*sizeof(int));
+	
+	va_list ap;
+	int cur_arg = 1;
+
+	va_start(ap, nombreDePoints);
+	
+	for (i = 0; i < nombreDePoints*2; i++)
+	{
+		cur_arg = va_arg(ap, int);
+		*(pointsList + i) = cur_arg;
+	}
+	
+	for (i = 0; i < nombreDePoints*2 - 2; i+=2)
+	{
+		drawLine(*(pointsList + i), *(pointsList + i + 1), *(pointsList + i + 2), *(pointsList + i + 3), r, g, b);
+	}
+	drawLine(*(pointsList + nombreDePoints*2 - 2), *(pointsList + nombreDePoints*2 - 1), *(pointsList), *(pointsList + 1), r, g, b);
+	va_end(ap);
+	free(pointsList);
+}
