@@ -234,8 +234,10 @@ void fillCircle(int x, int y, int radius, uint8_t r, uint8_t g, uint8_t b)
 	for(j=-radius; j<=radius; j++)
 		for(i=-radius; i<=radius; i++)
 			if(i*i+j*j <= radius*radius)
-				setPixelRGB(x + i, y + j, r, g, b);
+				setPixelRGB(x + i, y + j, r, g, b);               
 }
+
+/*  /!\ for circle and ellispe, the x and y must be the center of the shape, not the top-left point   /!\  */
 
 void fillEllipse(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b)
 {
