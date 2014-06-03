@@ -4,13 +4,13 @@ extern "C" {
 
 // Double-buffering
 
-unsigned short *BUFF_BASE_ADDRESS;
+ScreenBuffer *BUFF_BASE_ADDRESS;
 
 int initBuffering()
 {
 	if(!has_colors)
 		*(int32_t*)0xC000001C = (*((int32_t*)0xC000001C) & ~0b1110) | 0b1000;
-	BUFF_BASE_ADDRESS = (unsigned short*)malloc(BUFF_BYTES_SIZE);
+	BUFF_BASE_ADDRESS = (ScreenBuffer*)malloc(BUFF_BYTES_SIZE);
 	
 	return !BUFF_BASE_ADDRESS;
 }
@@ -48,13 +48,13 @@ void clearBuffer(unsigned short c)
 	int i;
 	if(has_colors)
 		for(i = 0; i < BUFF_BYTES_SIZE >> 1; i++)
-			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
+			*((ScreenBuffer*)BUFF_BASE_ADDRESS + i) = c;
 	else
 	{
 		c = ~c;
 		c = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
 		for(i = 0; i < BUFF_BYTES_SIZE >> 1; i++)
-			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
+			*((ScreenBuffer*)BUFF_BASE_ADDRESS + i) = c;
 	}
 }
 
@@ -69,11 +69,11 @@ inline unsigned short getPixel(unsigned short *src, int x, int y)
 inline void setPixelUnsafe(unsigned int x, unsigned int y, unsigned short c)
 {
 	if(has_colors)
-		*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
+		*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
 	else
 	{
 		c = ~c;
-		*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
+		*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
 	}
 }
 
@@ -82,11 +82,11 @@ inline void setPixel(unsigned int x, unsigned int y, unsigned short c)
 	if(x < 320 && y < 240)
 	{
 		if(has_colors)
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
+			*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
 		else
 		{
 			c = ~c;
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
+			*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
 		}
 	}
 }
@@ -96,9 +96,9 @@ inline void setPixelRGB(unsigned int x, unsigned int y, unsigned char r, unsigne
 	if(x < 320 && y < 240)
 	{
 		if(has_colors)
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
+			*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
 		else
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ~(r + g + b) & 0xffff;
+			*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ~(r + g + b) & 0xffff;
 	}
 }
 
