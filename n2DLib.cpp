@@ -15,7 +15,7 @@ int initBuffering()
 	return !BUFF_BASE_ADDRESS;
 }
 
-inline void updateScreen()
+void updateScreen()
 {
 	memcpy(SCREEN_BASE_ADDRESS, BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
 }
@@ -214,7 +214,7 @@ void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int nombreDePoints, ...)
 {
 	// the number of arguments in the <...> must be even
 	int i;
-	int* pointsList = malloc(nombreDePoints*2*sizeof(int));
+	int* pointsList = (int*)malloc(nombreDePoints*2*sizeof(int));
 	
 	va_list ap;
 	int cur_arg = 1;

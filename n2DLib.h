@@ -28,7 +28,7 @@ extern int currentBuf;
 extern unsigned short *doubleBuf[2];
 
 extern int initBuffering();
-extern inline void updateScreen();
+extern void updateScreen();
 extern void deinitBuffering();
 extern void clearBuffer(unsigned short);
 extern inline void setPixelUnsafe(unsigned int, unsigned int, unsigned short);
