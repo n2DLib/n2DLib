@@ -255,3 +255,5 @@ void fillEllipse(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b)
 			if(i*i*h*h+j*j*w*w <= h*h*w*w)
 				setPixelRGB(x + i, y + j, r, g, b);
 }
+
+}
