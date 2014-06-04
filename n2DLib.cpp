@@ -69,11 +69,11 @@ inline unsigned short getPixel(unsigned short *src, int x, int y)
 inline void setPixelUnsafe(unsigned int x, unsigned int y, unsigned short c)
 {
 	if(has_colors)
-		*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
+		*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
 	else
 	{
 		c = ~c;
-		*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
+		*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
 	}
 }
 
@@ -82,11 +82,11 @@ inline void setPixel(unsigned int x, unsigned int y, unsigned short c)
 	if(x < 320 && y < 240)
 	{
 		if(has_colors)
-			*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
+			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
 		else
 		{
 			c = ~c;
-			*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
+			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
 		}
 	}
 }
@@ -96,9 +96,9 @@ inline void setPixelRGB(unsigned int x, unsigned int y, unsigned char r, unsigne
 	if(x < 320 && y < 240)
 	{
 		if(has_colors)
-			*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
+			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
 		else
-			*((ScreenBuffer*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ~(r + g + b) & 0xffff;
+			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ~(r + g + b) & 0xffff;
 	}
 }
 
