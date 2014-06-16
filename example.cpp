@@ -2,11 +2,7 @@
 
 int main(int argc, char *argv[])
 {
-	if(initBuffering())
-	{
-		deinitBuffering();
-		exit(0);
-	}
+	initBuffering();
 	
 	clearBufferB();
 	
@@ -15,7 +11,6 @@ int main(int argc, char *argv[])
 	drawPolygon(0, 255, 0, 4, 140, 100, 180, 100, 180, 140, 140, 140);
 	
 	updateScreen();
-	
 	
 	while(!any_key_pressed());
 	
