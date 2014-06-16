@@ -31,6 +31,8 @@ extern int initBuffering();
 extern void updateScreen();
 extern void deinitBuffering();
 extern void clearBuffer(unsigned short);
+#define clearBufferW() memset(BUFF_BASE_ADDRESS, 0xff, BUFF_BYTES_SIZE)
+#define clearBufferB() memset(BUFF_BASE_ADDRESS, 0, BUFF_BYTES_SIZE)
 extern inline void setPixelUnsafe(unsigned int, unsigned int, unsigned short);
 extern inline void setPixel(unsigned int, unsigned int, unsigned short);
 extern inline void setPixelRGB(unsigned int, unsigned int, unsigned char, unsigned char, unsigned char);
