@@ -58,9 +58,9 @@ void clearBuffer(unsigned short c)
 	}
 }
 
-inline unsigned short getPixel(unsigned short *src, int x, int y)
+inline unsigned short getPixel(unsigned short *src, unsigned int x, unsigned int y)
 {
-	if(x >= 0 && x < src[0] && y >= 0 && y < src[1])
+	if(x < src[0] && y < src[1])
 		return src[x + y * src[0] + 3];
 	else
 		return src[2];
@@ -102,30 +102,32 @@ inline void setPixelRGB(unsigned int x, unsigned int y, unsigned char r, unsigne
 	}
 }
 
-void drawSprite(unsigned short *src, int _x, int _y)
+void drawSprite(unsigned short *src, unsigned int _x, unsigned int _y)
 {
-	int x, y, w = src[0] + _x, h = src[1] + _y, c = 3;
-	for(y = _y; y < h; y++)
+	unsigned int w = src[0] + _x, h = src[1] + _y, c = 3;
+	for(unsigned int y = _y; y < h; y++)
 	{
-		for(x = _x; x < w; x++, c++)
+		for(unsigned int x = _x; x < w; x++, c++)
 		{
 			if(src[c] != src[2])
-				setPixel(x, y, src[c]);
+				if(x < 320 && y < 240)
+					setPixel(x, y, src[c]);
 		}
 	}
 }
 
-void drawSpritePart(unsigned short *src, int _x, int _y, Rect part)
+void drawSpritePart(unsigned short *src, unsigned int _x, unsigned int _y, Rect part)
 {
 	unsigned short c;
-	int x, y = _y, w = part.w + _x, h = part.h + _y, z = part.x, t = part.y;
-	for(y = _y; y < h; y++, t++)
+	unsigned int w = part.w + _x, h = part.h + _y, z = part.x, t = part.y;
+	for(unsigned int y = _y; y < h; y++, t++)
 	{
-		for(x = _x, z = part.x; x < w; x++, z++)
+		for(unsigned int x = _x, z = part.x; x < w; x++, z++)
 		{
 			c = getPixel(src, z, t);
 			if(c != src[2])
-				setPixel(x, y, c);
+				if(x < 320 && y < 240)
+					setPixel(x, y, c);
 		}
 	}
 }
