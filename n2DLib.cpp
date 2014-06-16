@@ -25,7 +25,7 @@ void deinitBuffering()
 	// Sets the monochrome screen back to 4-bits
 	if(is_classic)
 		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0b1110) | 0b0100;
-	free(BUFF_BASE_ADDRESS);
+	if(BUFF_BASE_ADDRESS) free(BUFF_BASE_ADDRESS);
 }
 
 // Maths
