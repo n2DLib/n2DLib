@@ -33,7 +33,7 @@ void initBuffering()
 void updateScreen()
 {
 	// Screen-access delays make this the fastest method
-	memcpy(SCREEN_BASE_ADDRESS, BUFF_BASE_ADDRESS, BUFF_BYTE_SIZE);
+	memcpy(SCREEN_BASE_ADDRESS, BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
 }
 
 void deinitBuffering()
