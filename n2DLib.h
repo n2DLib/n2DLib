@@ -29,9 +29,9 @@ extern void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out);
 extern void initBuffering();
 extern void updateScreen();
 extern void deinitBuffering();
+extern void clearBufferB();
+extern void clearBufferW();
 extern void clearBuffer(unsigned short);
-#define clearBufferW() memset(BUFF_BASE_ADDRESS, is_classic ? 0 : 0xff, BUFF_BYTES_SIZE)
-#define clearBufferB() memset(BUFF_BASE_ADDRESS, is_classic ? 0xff : 0, BUFF_BYTES_SIZE)
 extern inline void setPixelUnsafe(unsigned int, unsigned int, unsigned short);
 extern inline void setPixel(unsigned int, unsigned int, unsigned short);
 extern inline void setPixelRGB(unsigned int, unsigned int, unsigned char, unsigned char, unsigned char);
