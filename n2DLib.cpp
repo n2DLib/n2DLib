@@ -32,10 +32,8 @@ void initBuffering()
 
 void updateScreen()
 {
-	int i;
-	// Cheat to make copies faster : use the whole 32-bits ARM9 registers !
-	for(i = 0; i < 320 * 120; i++)
-		((unsigned int*)SCREEN_BASE_ADDRESS)[i] = ((unsigned int*)BUFF_BASE_ADDRESS)[i];
+	// Screen-access delays make this the fastest method
+	memcpy(SCREEN_BASE_ADDRESS, BUFF_BASE_ADDRESS, BUFF_BYTE_SIZE);
 }
 
 void deinitBuffering()
