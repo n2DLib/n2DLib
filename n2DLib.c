@@ -18,12 +18,12 @@ void initBuffering()
 	if(is_classic)
 	{
 		SCREEN_BACKUP = *(void**)0xC0000010;
-		*(int32_t*)(0xC000001C) = (*((int32_t*)0xC000001C) & ~0b1110) | 0b1000;
+		*(int32_t*)(0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x08;
 		*(void**)(0xC0000010) = malloc(BUFF_BYTES_SIZE);
 		if(!*(void**)(0xC0000010))
 		{
 			free(BUFF_BASE_ADDRESS);
-			*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0b1110) | 0b0100;
+			*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
 			*(void**)(0xC0000010) = SCREEN_BACKUP;
 			exit(0);
 		}
@@ -42,7 +42,7 @@ void deinitBuffering()
 	if(is_classic)
 	{
 		free(SCREEN_BASE_ADDRESS);
-		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0b1110) | 0b0100;
+		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
 		*(void**)(0xC0000010) = SCREEN_BACKUP;
 	}
 	free(BUFF_BASE_ADDRESS);
