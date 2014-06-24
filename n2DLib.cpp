@@ -158,13 +158,13 @@ void drawSprite(unsigned short *src, unsigned int _x, unsigned int _y)
 	}
 }
 
-void drawSpritePart(unsigned short *src, unsigned int _x, unsigned int _y, Rect part)
+void drawSpritePart(unsigned short *src, unsigned int _x, unsigned int _y, Rect* part)
 {
 	unsigned short c;
-	unsigned int x, y, w = part.w + _x, h = part.h + _y, z = part.x, t = part.y;
+	unsigned int x, y, w = part->w + _x, h = part->h + _y, z = part->x, t = part->y;
 	for(y = _y; y < h; y++, t++)
 	{
-		for(x = _x, z = part.x; x < w; x++, z++)
+		for(x = _x, z = part->x; x < w; x++, z++)
 		{
 			c = getPixel(src, z, t);
 			if(c != src[2])
@@ -174,7 +174,7 @@ void drawSpritePart(unsigned short *src, unsigned int _x, unsigned int _y, Rect 
 	}
 }
 
-void drawSpriteRotated(unsigned short* source, Rect sr, Fixed angle)
+void drawSpriteRotated(unsigned short* source, Rect* sr, Fixed angle)
 {
 	Rect upleft, upright, downleft, downright;
 	Rect fr;
@@ -186,15 +186,15 @@ void drawSpriteRotated(unsigned short* source, Rect sr, Fixed angle)
 	rotate(-source[0] / 2, source[1] / 2, dX, dY, &downleft);
 	rotate(source[0] / 2, source[1] / 2, dX, dY, &downright);
 	
-	fr.x = min(min(min(upleft.x, upright.x), downleft.x), downright.x) + sr.x;
-	fr.y = min(min(min(upleft.y, upright.y), downleft.y), downright.y) + sr.y;
-	fr.w = max(max(max(upleft.x, upright.x), downleft.x), downright.x) + sr.x;
-	fr.h = max(max(max(upleft.y, upright.y), downleft.y), downright.y) + sr.y;
+	fr.x = min(min(min(upleft.x, upright.x), downleft.x), downright.x) + sr->x;
+	fr.y = min(min(min(upleft.y, upright.y), downleft.y), downright.y) + sr->y;
+	fr.w = max(max(max(upleft.x, upright.x), downleft.x), downright.x) + sr->x;
+	fr.h = max(max(max(upleft.y, upright.y), downleft.y), downright.y) + sr->y;
 	
 	Rect cp, lsp, cdrp;
 	
-	lsp.x = fixmul(itofix(fr.x - sr.x), dX) + fixmul(itofix(fr.y - sr.y), -dY);
-	lsp.y = fixmul(itofix(fr.x - sr.x), dY) + fixmul(itofix(fr.y - sr.y), dX);
+	lsp.x = fixmul(itofix(fr.x - sr->x), dX) + fixmul(itofix(fr.y - sr->y), -dY);
+	lsp.y = fixmul(itofix(fr.x - sr->x), dY) + fixmul(itofix(fr.y - sr->y), dX);
 	
 	for(cp.y = fr.y; cp.y < fr.h; cp.y++)
 	{
@@ -259,6 +259,8 @@ void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int nombreDePoints, ...)
 	// the number of arguments in the <...> must be even
 	int i;
 	int* pointsList = (int*)malloc(nombreDePoints*2*sizeof(int));
+	
+	if (!pointsList) return;
 	
 	va_list ap;
 	int cur_arg = 1;
