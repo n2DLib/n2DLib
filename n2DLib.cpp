@@ -17,10 +17,10 @@ void initBuffering()
 	// Handle monochrome screens-specific shit
 	if(is_classic)
 	{
-		SCREEN_BACKUP = SCREEN_BASE_ADDRESS;
+		SCREEN_BACKUP = *(void**)0xC0000010;
 		*(int32_t*)(0xC000001C) = (*((int32_t*)0xC000001C) & ~0b1110) | 0b1000;
 		*(void**)(0xC0000010) = malloc(BUFF_BYTES_SIZE);
-		if(!SCREEN_BASE_ADDRESS)
+		if(!*(void**)(0xC0000010))
 		{
 			free(BUFF_BASE_ADDRESS);
 			*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0b1110) | 0b0100;
@@ -33,7 +33,7 @@ void initBuffering()
 void updateScreen()
 {
 	// Screen-access delays make this the fastest method
-	memcpy(SCREEN_BASE_ADDRESS, BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
+	memcpy(*(void**)0xC0000010, BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
 }
 
 void deinitBuffering()
