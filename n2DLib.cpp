@@ -66,15 +66,23 @@ void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out)
 void clearBufferB()
 {
 	int i;
-	for(i = 0; i < 320 * 120; i++)
-		((unsigned int*)BUFF_BASE_ADDRESS)[i] = is_cx ? 0 : 255;
+	if(has_colors)
+		for(i = 0; i < 160 * 240; i++)
+			((unsigned int*)BUFF_BASE_ADDRESS)[i] = 0;
+	else
+		for(i = 0; i < 160 * 240; i++)
+			((unsigned int*)BUFF_BASE_ADDRESS)[i] = 0xffffffff;
 }
 
 void clearBufferW()
 {
 	int i;
-	for(i = 0; i < 320 * 120; i++)
-		((unsigned int*)BUFF_BASE_ADDRESS)[i] = is_cx ? 255 : 0;
+	if(has_colors)
+		for(i = 0; i < 160 * 240; i++)
+			((unsigned int*)BUFF_BASE_ADDRESS)[i] = 0xffffffff;
+	else
+		for(i = 0; i < 160 * 240; i++)
+			((unsigned int*)BUFF_BASE_ADDRESS)[i] = 0;
 }
 
 void clearBuffer(unsigned short c)
