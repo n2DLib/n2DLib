@@ -252,31 +252,31 @@ void drawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 	}
 }
 
-void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int nombreDePoints, ...)
+void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int pointsNb, ...)
 // r, g, b, <number of points you want (4 for a square, for instance, not 8 because of x and y...)>, <x1,y1,x2,y2...>
 {
 	// the number of arguments in the <...> must be even
 	int i;
-	int* pointsList = (int*)malloc(nombreDePoints*2*sizeof(int));
+	int* pointsList = (int*)malloc(pointsNb*2*sizeof(int));
 	
 	if (!pointsList) return;
 	
 	va_list ap;
 	int cur_arg = 1;
 
-	va_start(ap, nombreDePoints);
+	va_start(ap, pointsNb);
 	
-	for (i = 0; i < nombreDePoints*2; i++)
+	for (i = 0; i < pointsNb*2; i++)
 	{
 		cur_arg = va_arg(ap, int);
 		*(pointsList + i) = cur_arg;
 	}
 	
-	for (i = 0; i < nombreDePoints*2 - 2; i+=2)
+	for (i = 0; i < pointsNb*2 - 2; i+=2)
 	{
 		drawLine(*(pointsList + i), *(pointsList + i + 1), *(pointsList + i + 2), *(pointsList + i + 3), r, g, b);
 	}
-	drawLine(*(pointsList + nombreDePoints*2 - 2), *(pointsList + nombreDePoints*2 - 1), *(pointsList), *(pointsList + 1), r, g, b);
+	drawLine(*(pointsList + pointsNb*2 - 2), *(pointsList + pointsNb*2 - 1), *(pointsList), *(pointsList + 1), r, g, b);
 	va_end(ap);
 	free(pointsList);
 }
