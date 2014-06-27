@@ -96,7 +96,7 @@ void clearBuffer(unsigned short c)
 	
 	dc = (c << 16) | c;
 	for(i = 0; i < 160 * 240 >> 1; i++)
-		((unsigned int*)BUFF_BASE_ADDRESS)[i] = c;
+		((unsigned int*)BUFF_BASE_ADDRESS)[i] = dc;
 }
 
 inline unsigned short getPixel(unsigned short *src, unsigned int x, unsigned int y)
