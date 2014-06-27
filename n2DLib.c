@@ -95,7 +95,7 @@ void clearBuffer(unsigned short c)
 	}
 	
 	dc = (c << 16) | c;
-	for(i = 0; i < 160 * 240 >> 1; i++)
+	for(i = 0; i < 160 * 240; i++)
 		((unsigned int*)BUFF_BASE_ADDRESS)[i] = dc;
 }
 
