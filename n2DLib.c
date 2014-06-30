@@ -14,19 +14,19 @@ void initBuffering()
 	BUFF_BASE_ADDRESS = (unsigned short*)malloc(BUFF_BYTES_SIZE);
 	if(!BUFF_BASE_ADDRESS) exit(0);
 	
+	SCREEN_BACKUP = *(void**)0xC0000010;
+	
 	// Handle monochrome screens-specific shit
 	if(is_classic)
-	{
-		SCREEN_BACKUP = *(void**)0xC0000010;
 		*(int32_t*)(0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x08;
-		*(void**)(0xC0000010) = malloc(BUFF_BYTES_SIZE);
-		if(!*(void**)(0xC0000010))
-		{
-			free(BUFF_BASE_ADDRESS);
-			*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
-			*(void**)(0xC0000010) = SCREEN_BACKUP;
-			exit(0);
-		}
+	
+	*(void**)(0xC0000010) = malloc(BUFF_BYTES_SIZE);
+	if(!*(void**)(0xC0000010))
+	{
+		free(BUFF_BASE_ADDRESS);
+		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
+		*(void**)(0xC0000010) = SCREEN_BACKUP;
+		exit(0);
 	}
 }
 
@@ -38,13 +38,11 @@ void updateScreen()
 
 void deinitBuffering()
 {
+	free(SCREEN_BASE_ADDRESS);
 	// Handle monochrome screens-specific shit again
 	if(is_classic)
-	{
-		free(SCREEN_BASE_ADDRESS);
 		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
-		*(void**)(0xC0000010) = SCREEN_BACKUP;
-	}
+	*(void**)(0xC0000010) = SCREEN_BACKUP;
 	free(BUFF_BASE_ADDRESS);
 }
 
@@ -87,16 +85,17 @@ void clearBufferW()
 
 void clearBuffer(unsigned short c)
 {
-	unsigned int i, dc;
-	if(is_classic)
+	int i;
+	if(has_colors)
+		for(i = 0; i < BUFF_BYTES_SIZE >> 1; i++)
+			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
+	else
 	{
 		c = ~c;
 		c = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
+		for(i = 0; i < BUFF_BYTES_SIZE >> 1; i++)
+			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
 	}
-	
-	dc = (c << 16) | c;
-	for(i = 0; i < 160 * 240; i++)
-		((unsigned int*)BUFF_BASE_ADDRESS)[i] = dc;
 }
 
 inline unsigned short getPixel(unsigned short *src, unsigned int x, unsigned int y)
@@ -252,31 +251,31 @@ void drawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 	}
 }
 
-void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int pointsNb, ...)
+void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int nombreDePoints, ...)
 // r, g, b, <number of points you want (4 for a square, for instance, not 8 because of x and y...)>, <x1,y1,x2,y2...>
 {
 	// the number of arguments in the <...> must be even
 	int i;
-	int* pointsList = (int*)malloc(pointsNb*2*sizeof(int));
+	int* pointsList = (int*)malloc(nombreDePoints*2*sizeof(int));
 	
 	if (!pointsList) return;
 	
 	va_list ap;
 	int cur_arg = 1;
 
-	va_start(ap, pointsNb);
+	va_start(ap, nombreDePoints);
 	
-	for (i = 0; i < pointsNb*2; i++)
+	for (i = 0; i < nombreDePoints*2; i++)
 	{
 		cur_arg = va_arg(ap, int);
 		*(pointsList + i) = cur_arg;
 	}
 	
-	for (i = 0; i < pointsNb*2 - 2; i+=2)
+	for (i = 0; i < nombreDePoints*2 - 2; i+=2)
 	{
 		drawLine(*(pointsList + i), *(pointsList + i + 1), *(pointsList + i + 2), *(pointsList + i + 3), r, g, b);
 	}
-	drawLine(*(pointsList + pointsNb*2 - 2), *(pointsList + pointsNb*2 - 1), *(pointsList), *(pointsList + 1), r, g, b);
+	drawLine(*(pointsList + nombreDePoints*2 - 2), *(pointsList + nombreDePoints*2 - 1), *(pointsList), *(pointsList + 1), r, g, b);
 	va_end(ap);
 	free(pointsList);
 }
