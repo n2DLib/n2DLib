@@ -112,6 +112,14 @@ Sets a pixel to the given color, but does not make sure the pixel is in the scre
 Copies the content of the buffer to the screen. This does not clear the buffer.
 
 =============
+TEXT ROUTINES
+=============
+
+-- void drawString(int x, int y, const char *str, unsigned short c)
+
+Draws a string at the given position with the given color using n2DLib's built-in font. Does clipping and supports newlines with \n.
+
+=============
 MATH ROUTINES
 =============
 
