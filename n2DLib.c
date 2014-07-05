@@ -9,7 +9,7 @@ extern "C" {
  *  Buffering  *
  *             */
 
-unsigned short *BUFF_BASE_ADDRESS;
+unsigned short *BUFF_BASE_ADDRESS, *ALT_SCREEN_BASE_ADDRESS;
 void *SCREEN_BACKUP;
 
 void initBuffering()
@@ -23,29 +23,30 @@ void initBuffering()
 	if(is_classic)
 		*(int32_t*)(0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x08;
 	
-	*(void**)(0xC0000010) = malloc(BUFF_BYTES_SIZE);
-	if(!*(void**)(0xC0000010))
+	ALT_SCREEN_BASE_ADDRESS = (unsigned short*)malloc(BUFF_BYTES_SIZE);
+	if(!ALT_SCREEN_BASE_ADDRESS)
 	{
 		free(BUFF_BASE_ADDRESS);
 		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
-		*(void**)(0xC0000010) = SCREEN_BACKUP;
+		*(void**)0xC0000010 = SCREEN_BACKUP;
 		exit(0);
 	}
+	*(void**)0xC0000010 = ALT_SCREEN_BASE_ADDRESS;
 }
 
 void updateScreen()
 {
 	// Screen-access delays make this the fastest method
-	memcpy(*(void**)0xC0000010, BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
+	memcpy(ALT_SCREEN_BASE_ADDRESS, BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
 }
 
 void deinitBuffering()
 {
-	free(SCREEN_BASE_ADDRESS);
 	// Handle monochrome screens-specific shit again
 	if(is_classic)
 		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
 	*(void**)(0xC0000010) = SCREEN_BACKUP;
+	free(ALT_SCREEN_BASE_ADDRESS);
 	free(BUFF_BASE_ADDRESS);
 }
 
