@@ -42,6 +42,7 @@ extern void drawLine(int, int, int, int, uint8_t, uint8_t, uint8_t);
 extern void drawPolygon(uint8_t, uint8_t, uint8_t, int, ...);
 extern void fillCircle(int, int, int, uint8_t, uint8_t, uint8_t);
 extern void fillEllipse(int, int, int, int, uint8_t, uint8_t, uint8_t);
+extern void drawString(int, int, const char*, unsigned short);
 
 #define BUFF_BYTES_SIZE (320*240*2)
 extern unsigned short *BUFF_BASE_ADDRESS;
