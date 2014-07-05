@@ -91,6 +91,10 @@ Fills a circle of the given 3-components color.
 
 Fills an ellipse of the given size with the given 3-components color.
 
+-- void fillRect(int x, int y, int w, int h, unsigned short c)
+
+Fills a rectangle of the given dimensions with the given color ; does clipping.
+
 -- void initBuffering()
 
 Initializes the buffering functionalities. Call this as the very first instruction of your program if you want to use n2DLib's buffering.

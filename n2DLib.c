@@ -151,6 +151,17 @@ inline void setPixelRGB(unsigned int x, unsigned int y, unsigned char r, unsigne
 	}
 }
 
+void fillRect(int x, int y, int w, int h, unsigned short c)
+{
+	unsigned int _x = max(x, 0), _y = max(y, 0), _w = min(320 - _x, w - _x + x), _h = min(240 - _y, h - _y + y), i, j;
+	if(_x < 320 && _y < 240)
+	{
+		for(j = _y; j < _y + _h; j++)
+			for(i = _x; i < _x + _w; i++)
+				setPixelUnsafe(i, j, c);
+	}
+}
+
 void drawSprite(unsigned short *src, unsigned int _x, unsigned int _y)
 {
 	unsigned int x, y, w = src[0] + _x, h = src[1] + _y, c = 3;

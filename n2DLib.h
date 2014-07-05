@@ -35,6 +35,7 @@ extern void clearBuffer(unsigned short);
 extern inline void setPixelUnsafe(unsigned int, unsigned int, unsigned short);
 extern inline void setPixel(unsigned int, unsigned int, unsigned short);
 extern inline void setPixelRGB(unsigned int, unsigned int, unsigned char, unsigned char, unsigned char);
+extern void fillRect(int, int, int, int, unsigned short);
 extern void drawSprite(unsigned short*, unsigned int, unsigned int);
 extern void drawSpritePart(unsigned short*, unsigned int, unsigned int, Rect*);
 extern void drawSpriteRotated(unsigned short*, Rect*, Fixed);
