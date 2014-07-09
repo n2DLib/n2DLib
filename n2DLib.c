@@ -107,7 +107,7 @@ void clearBuffer(unsigned short c)
 	}
 }
 
-inline unsigned short getPixel(unsigned short *src, unsigned int x, unsigned int y)
+inline unsigned short getPixel(const unsigned short *src, unsigned int x, unsigned int y)
 {
 	if(x < src[0] && y < src[1])
 		return src[x + y * src[0] + 3];
@@ -167,7 +167,7 @@ void fillRect(int x, int y, int w, int h, unsigned short c)
 	}
 }
 
-void drawSprite(unsigned short *src, unsigned int _x, unsigned int _y)
+void drawSprite(const unsigned short *src, unsigned int _x, unsigned int _y)
 {
 	unsigned int x, y, w = src[0] + _x, h = src[1] + _y, c = 3;
 	for(y = _y; y < h; y++)
@@ -181,7 +181,7 @@ void drawSprite(unsigned short *src, unsigned int _x, unsigned int _y)
 	}
 }
 
-void drawSpritePart(unsigned short *src, unsigned int _x, unsigned int _y, Rect* part)
+void drawSpritePart(const unsigned short *src, unsigned int _x, unsigned int _y, const Rect* part)
 {
 	unsigned short c;
 	unsigned int x, y, w = part->w + _x, h = part->h + _y, z = part->x, t = part->y;
@@ -197,7 +197,7 @@ void drawSpritePart(unsigned short *src, unsigned int _x, unsigned int _y, Rect*
 	}
 }
 
-void drawSpriteRotated(unsigned short* source, Rect* sr, Fixed angle)
+void drawSpriteRotated(const unsigned short* source, const Rect* sr, Fixed angle)
 {
 	Rect upleft, upright, downleft, downright;
 	Rect fr;
