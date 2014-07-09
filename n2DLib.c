@@ -96,13 +96,13 @@ void clearBuffer(unsigned short c)
 {
 	int i;
 	if(has_colors)
-		for(i = 0; i < BUFF_BYTES_SIZE >> 1; i++)
+		for(i = 0; i < BUFF_BYTES_SIZE / 2; i++)
 			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
 	else
 	{
 		c = ~c;
 		c = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
-		for(i = 0; i < BUFF_BYTES_SIZE >> 1; i++)
+		for(i = 0; i < BUFF_BYTES_SIZE / 2; i++)
 			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
 	}
 }
@@ -118,11 +118,11 @@ inline unsigned short getPixel(unsigned short *src, unsigned int x, unsigned int
 inline void setPixelUnsafe(unsigned int x, unsigned int y, unsigned short c)
 {
 	if(has_colors)
-		*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
+		*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = c;
 	else
 	{
 		c = ~c;
-		*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
+		*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
 	}
 }
 
@@ -131,11 +131,11 @@ inline void setPixel(unsigned int x, unsigned int y, unsigned short c)
 	if(x < 320 && y < 240)
 	{
 		if(has_colors)
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = c;
+			*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = c;
 		else
 		{
 			c = ~c;
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
+			*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
 		}
 	}
 }
@@ -145,9 +145,9 @@ inline void setPixelRGB(unsigned int x, unsigned int y, unsigned char r, unsigne
 	if(x < 320 && y < 240)
 	{
 		if(has_colors)
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
+			*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
 		else
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + (y << 8) + (y << 6)) = ~(r + g + b) & 0xffff;
+			*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = ~(r + g + b) & 0xffff;
 	}
 }
 
@@ -156,9 +156,14 @@ void fillRect(int x, int y, int w, int h, unsigned short c)
 	unsigned int _x = max(x, 0), _y = max(y, 0), _w = min(320 - _x, w - _x + x), _h = min(240 - _y, h - _y + y), i, j;
 	if(_x < 320 && _y < 240)
 	{
+		if(!has_colors)
+		{
+			c = ~c;
+			c = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
+		}
 		for(j = _y; j < _y + _h; j++)
 			for(i = _x; i < _x + _w; i++)
-				setPixelUnsafe(i, j, c);
+				*((unsigned short*)BUFF_BASE_ADDRESS + i + j * 320) = c;
 	}
 }
 
@@ -171,7 +176,7 @@ void drawSprite(unsigned short *src, unsigned int _x, unsigned int _y)
 		{
 			if(src[c] != src[2])
 				if(x < 320 && y < 240)
-					setPixel(x, y, src[c]);
+					setPixelUnsafe(x, y, src[c]);
 		}
 	}
 }
@@ -187,7 +192,7 @@ void drawSpritePart(unsigned short *src, unsigned int _x, unsigned int _y, Rect*
 			c = getPixel(src, z, t);
 			if(c != src[2])
 				if(x < 320 && y < 240)
-					setPixel(x, y, c);
+					setPixelUnsafe(x, y, c);
 		}
 	}
 }
@@ -228,7 +233,7 @@ void drawSpriteRotated(unsigned short* source, Rect* sr, Fixed angle)
 					currentPixel = getPixel(source, fixtoi(cdrp.x) + source[0] / 2, fixtoi(cdrp.y) + source[1] / 2);
 					if(currentPixel != source[2])
 					{
-						setPixel(cp.x, cp.y, currentPixel);
+						setPixelUnsafe(cp.x, cp.y, currentPixel);
 					}
 				}
 			}
