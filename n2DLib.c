@@ -95,16 +95,13 @@ void clearBufferW()
 void clearBuffer(unsigned short c)
 {
 	int i;
-	if(has_colors)
-		for(i = 0; i < BUFF_BYTES_SIZE / 2; i++)
-			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
-	else
+	if(!has_colors)
 	{
 		c = ~c;
 		c = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
-		for(i = 0; i < BUFF_BYTES_SIZE / 2; i++)
-			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
 	}
+	for(i = 0; i < BUFF_BYTES_SIZE / 2; i++)
+			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
 }
 
 inline unsigned short getPixel(const unsigned short *src, unsigned int x, unsigned int y)

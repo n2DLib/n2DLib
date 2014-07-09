@@ -32,6 +32,7 @@ extern void deinitBuffering();
 extern void clearBufferB();
 extern void clearBufferW();
 extern void clearBuffer(unsigned short);
+extern inline unsigned short getPixel(const unsigned short*, unsigned int, unsigned int);
 extern inline void setPixelUnsafe(unsigned int, unsigned int, unsigned short);
 extern inline void setPixel(unsigned int, unsigned int, unsigned short);
 extern inline void setPixelRGB(unsigned int, unsigned int, unsigned char, unsigned char, unsigned char);
