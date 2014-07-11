@@ -9,7 +9,7 @@ extern "C" {
  *  Buffering  *
  *             */
 
-unsigned short *BUFF_BASE_ADDRESS, *ALT_SCREEN_BASE_ADDRESS;
+unsigned short *BUFF_BASE_ADDRESS, *ALT_SCREEN_BASE_ADDRESS, *INV_BUFF;
 void *SCREEN_BACKUP;
 
 void initBuffering()
@@ -31,13 +31,41 @@ void initBuffering()
 		*(void**)0xC0000010 = SCREEN_BACKUP;
 		exit(0);
 	}
+	INV_BUFF = (unsigned short*)malloc(BUFF_BYTES_SIZE);
+	if(!INV_BUFF)
+	{
+		free(ALT_SCREEN_BASE_ADDRESS);
+		free(BUFF_BASE_ADDRESS);
+		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
+		*(void**)0xC0000010 = SCREEN_BACKUP;
+		exit(0);
+	}
+	
 	*(void**)0xC0000010 = ALT_SCREEN_BASE_ADDRESS;
 }
 
 void updateScreen()
 {
-	// Screen-access delays make this the fastest method
-	memcpy(ALT_SCREEN_BASE_ADDRESS, BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
+	unsigned int *dest, *src, i, c;
+	if(has_colors)
+	{
+		// Screen-access delays make this the fastest method
+		memcpy(ALT_SCREEN_BASE_ADDRESS, BUFF_BASE_ADDRESS, BUFF_BYTES_SIZE);
+	}
+	else
+	{
+		dest = (unsigned int*)INV_BUFF;
+		src = (unsigned int*)BUFF_BASE_ADDRESS;
+		for(i = 0; i < 160 * 240; i++)
+		{
+			c = *src++;
+			// c holds two 16-bits colors, decompose them while keeping them that way
+ 			c = (((c & 0x1f) + ((c >> 5) & 0x3f) + ((c >> 11) & 0x1f)) & 0xffff) + 
+				(((((c >> 16) & 0x1f) + ((c >> 21) & 0x3f) + ((c >> 27) & 0x1f)) & 0xffff) << 16);
+			*dest++ = ~c;
+		}
+		memcpy(ALT_SCREEN_BASE_ADDRESS, INV_BUFF, BUFF_BYTES_SIZE);
+	}
 }
 
 void deinitBuffering()
@@ -46,6 +74,7 @@ void deinitBuffering()
 	if(is_classic)
 		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
 	*(void**)(0xC0000010) = SCREEN_BACKUP;
+	free(INV_BUFF);
 	free(ALT_SCREEN_BASE_ADDRESS);
 	free(BUFF_BASE_ADDRESS);
 }
@@ -73,33 +102,20 @@ void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out)
 void clearBufferB()
 {
 	int i;
-	if(has_colors)
-		for(i = 0; i < 160 * 240; i++)
-			((unsigned int*)BUFF_BASE_ADDRESS)[i] = 0;
-	else
-		for(i = 0; i < 160 * 240; i++)
-			((unsigned int*)BUFF_BASE_ADDRESS)[i] = 0xffffffff;
+	for(i = 0; i < 160 * 240; i++)
+		((unsigned int*)BUFF_BASE_ADDRESS)[i] = 0;
 }
 
 void clearBufferW()
 {
 	int i;
-	if(has_colors)
-		for(i = 0; i < 160 * 240; i++)
-			((unsigned int*)BUFF_BASE_ADDRESS)[i] = 0xffffffff;
-	else
-		for(i = 0; i < 160 * 240; i++)
-			((unsigned int*)BUFF_BASE_ADDRESS)[i] = 0;
+	for(i = 0; i < 160 * 240; i++)
+		((unsigned int*)BUFF_BASE_ADDRESS)[i] = 0xffffffff;
 }
 
 void clearBuffer(unsigned short c)
 {
 	int i;
-	if(!has_colors)
-	{
-		c = ~c;
-		c = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
-	}
 	for(i = 0; i < BUFF_BYTES_SIZE / 2; i++)
 			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
 }
@@ -114,38 +130,19 @@ inline unsigned short getPixel(const unsigned short *src, unsigned int x, unsign
 
 inline void setPixelUnsafe(unsigned int x, unsigned int y, unsigned short c)
 {
-	if(has_colors)
-		*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = c;
-	else
-	{
-		c = ~c;
-		*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
-	}
+	*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = c;
 }
 
 inline void setPixel(unsigned int x, unsigned int y, unsigned short c)
 {
 	if(x < 320 && y < 240)
-	{
-		if(has_colors)
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = c;
-		else
-		{
-			c = ~c;
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
-		}
-	}
+		*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = c;
 }
 
 inline void setPixelRGB(unsigned int x, unsigned int y, unsigned char r, unsigned char g, unsigned char b)
 {
 	if(x < 320 && y < 240)
-	{
-		if(has_colors)
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
-		else
-			*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = ~(r + g + b) & 0xffff;
-	}
+		*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
 }
 
 void fillRect(int x, int y, int w, int h, unsigned short c)
@@ -153,11 +150,6 @@ void fillRect(int x, int y, int w, int h, unsigned short c)
 	unsigned int _x = max(x, 0), _y = max(y, 0), _w = min(320 - _x, w - _x + x), _h = min(240 - _y, h - _y + y), i, j;
 	if(_x < 320 && _y < 240)
 	{
-		if(!has_colors)
-		{
-			c = ~c;
-			c = ((c >> 11) + ((c & 0x07c0) >> 6) + (c & 0x1f)) & 0xffff;
-		}
 		for(j = _y; j < _y + _h; j++)
 			for(i = _x; i < _x + _w; i++)
 				*((unsigned short*)BUFF_BASE_ADDRESS + i + j * 320) = c;
