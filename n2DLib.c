@@ -156,32 +156,30 @@ void fillRect(int x, int y, int w, int h, unsigned short c)
 	}
 }
 
-void drawSprite(const unsigned short *src, unsigned int _x, unsigned int _y)
+void drawSprite(const unsigned short *src, int _x, int _y)
 {
-	unsigned int x, y, w = src[0] + _x, h = src[1] + _y, c = 3;
+	int x, y, w = src[0] + _x, h = src[1] + _y, c = 3;
 	for(y = _y; y < h; y++)
 	{
 		for(x = _x; x < w; x++, c++)
 		{
 			if(src[c] != src[2])
-				if(x < 320 && y < 240)
-					setPixelUnsafe(x, y, src[c]);
+				setPixel(x, y, src[c]);
 		}
 	}
 }
 
-void drawSpritePart(const unsigned short *src, unsigned int _x, unsigned int _y, const Rect* part)
+void drawSpritePart(const unsigned short *src, int _x, int _y, const Rect* part)
 {
 	unsigned short c;
-	unsigned int x, y, w = part->w + _x, h = part->h + _y, z = part->x, t = part->y;
+	int x, y, w = part->w + _x, h = part->h + _y, z = part->x, t = part->y;
 	for(y = _y; y < h; y++, t++)
 	{
 		for(x = _x, z = part->x; x < w; x++, z++)
 		{
 			c = getPixel(src, z, t);
 			if(c != src[2])
-				if(x < 320 && y < 240)
-					setPixelUnsafe(x, y, c);
+				setPixel(x, y, c);
 		}
 	}
 }
