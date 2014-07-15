@@ -119,9 +119,21 @@ Copies the content of the buffer to the screen. This does not clear the buffer.
 TEXT ROUTINES
 =============
 
--- void drawString(int x, int y, const char *str, unsigned short c)
+-- void drawChar(int *x, int *y, int margin, char ch, unsigned short c)
 
-Draws a string at the given position with the given color using n2DLib's built-in font. Does clipping and supports newlines with \n.
+Draws a single character at the given position with the given color using n2DLib's built-in font. Does clipping and supports newlines with \n. When \n is passed as ch, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would.
+
+-- void drawDecimal(int *x, int *y, int n, unsigned short)
+
+Draws a signed integer at the given position with the given color using n2DLib's built-in font. Does clipping. X and Y are modified like a cursor position would. Use this as a fast way to display integers only.
+
+-- void drawString(int *x, int *y, int margin, const char *str, unsigned short c)
+
+Draws a string of characters at the given position with the given color using n2DLib's built-in font. Does clipping and supports newlines with \n. When \n is encountered in the string, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would. Use this as a fast way to display strings only.
+
+-- void drawStringF(int *x, int *y, int margin, unsigned short c, const char *s, ...)
+
+Draws a string of characters at the given position with the given color using n2DLib's built-in font. Does clipping and supports newlines with \n and printf-like arguments. When \n is encountered in the string, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would.
 
 =============
 MATH ROUTINES
