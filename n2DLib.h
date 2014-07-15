@@ -25,6 +25,10 @@ extern "C" {
 
 extern Fixed fixcos(Fixed angle);
 extern void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out);
+extern inline int sq(int);
+extern inline Fixed fixsq(Fixed);
+extern inline int cube(int);
+extern inline Fixed fixcube(Fixed);
 
 extern void initBuffering();
 extern void updateScreen();

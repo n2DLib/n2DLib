@@ -95,6 +95,26 @@ void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out)
 	out->y = fixtoi(fixmul(itofix(x), -sa) + fixmul(itofix(y), ca));
 }
 
+inline int sq(int x)
+{
+	return x * x;
+}
+
+inline Fixed fixsq(Fixed x)
+{
+	return fixmul(x, x);
+}
+
+inline int cube(int x)
+{
+	return x * x * x;
+}
+
+inline Fixed fixcube(Fixed x)
+{
+	return fixmul(fixmul(x, x), x);
+}
+
 /*            *
  *  Graphics  *
  *            */
