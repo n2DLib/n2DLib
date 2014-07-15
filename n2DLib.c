@@ -316,33 +316,87 @@ void fillEllipse(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b)
  *  Text  *
  *        */
 
-void drawString(int x, int y, const char *str, unsigned short c)
+void drawChar(int *x, int *y, int margin, char ch, unsigned short c)
 {
-	int i, j, k, _x = x, max = strlen(str) + 1;
-	unsigned char *curChar;
-	for(i = 0; i < max; i++)
+	int i, j;
+	unsigned char *charSprite;
+	if(ch == '\n')
 	{
-		curChar = n2DLib_font + str[i] * 8;
-		if(str[i] == '\n')
-		{
-			x = _x;
-			y += 8;
-		}
-		else
-		{
-			// Draw curChar as monochrome 8*8 image using given color
-			for(k = 0; k < 8; k++)
-			{
-				for(j = 7; j >= 0; j--)
-				{
-					if((curChar[k] >> j) & 1)
-						setPixel(x + (7 - j), y + k, c);
-				}
-			}
-			x += 8;
-		}
-		if(x > 319) break;
+		*x = margin;
+		*y += 8;
 	}
+	else if(*y < 239)
+	{
+		charSprite = ch * 8 + n2DLib_font;
+		// Draw charSprite as monochrome 8*8 image using given color
+		for(i = 0; i < 8; i++)
+		{
+			for(j = 7; j >= 0; j--)
+			{
+				if((charSprite[i] >> j) & 1)
+					setPixel(*x + (7 - j), *y + i, c);
+			}
+		}
+		*x += 8;
+	}
+}
+
+void drawString(int *x, int *y, int _x, const char *str, unsigned short c)
+{
+	int i, max = strlen(str) + 1;
+	for(i = 0; i < max; i++)
+		drawChar(x, y, _x, str[i], c);
+}
+
+void drawDecimal(int *x, int *y, int n, unsigned short c)
+{
+	// Ints go to 4294967295
+	int divisor = 1000000000, num, numHasStarted = 0;
+	
+	if(n < 0)
+	{
+		drawChar(x, y, 0, '-', c);
+		n = -n;
+	}
+	while(divisor != 0)
+	{
+		num = n / divisor;
+		if(divisor == 1 || num != 0 || numHasStarted)
+		{
+			numHasStarted = 1;
+			drawChar(x, y, 0, num + '0', c);
+		}
+		n %= divisor;
+		divisor /= 10;
+	}
+}
+
+inline char findFormatting(char **s)
+{
+	if(**s == '%')
+	{
+		if(*(*s + 1) != 'd' && *(*s + 1) != 's')
+			return 0;
+		else
+			return *(*s + 1);
+	}
+	else
+	{
+		(*s)++;
+		return 0;
+	}
+}
+
+void drawStringF(int *x, int *y, int _x, unsigned short c, const char *s, ...)
+{
+	va_list specialArgs;
+	char str[1200] = { 0 };
+	// Max nb of chars on-screen
+	
+	va_start(specialArgs, s);
+	vsprintf(str, s, specialArgs);
+	drawString(x, y, _x, str, c);
+	va_end(specialArgs);
 }
 
 #ifdef __cplusplus

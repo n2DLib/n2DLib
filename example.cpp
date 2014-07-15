@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 {
 	Fixed theta = 0;
 	Rect spr;
+	int x, y;
 	
 	initBuffering();
 	clearBufferB();
@@ -52,7 +53,14 @@ int main(int argc, char *argv[])
 		fillRect(310, 230, 20, 20, 0x001f);
 		fillRect(-10, 230, 20, 20, 0xffff);
 		
-		drawString(0, 120, "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqsrtuvwxyz\n0123456789<!%$#>", 0x07e0);
+		x = 0;
+		y = 120;
+		
+		drawString(&x, &y, x, "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqsrtuvwxyz\n0123456789<!%$#>\n", 0x07e0);
+		drawDecimal(&x, &y, -2134567841, 0x07e0);
+		x = 0;
+		y += 8;
+		drawStringF(&x, &y, x, 0x07e0, "Test ; number : %d, string : %s", 42, "the game");
 		
 		drawSpriteRotated(sprite, &spr, theta);
 		theta++;
