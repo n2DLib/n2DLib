@@ -336,14 +336,79 @@ void fillEllipse(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b)
  *  Text  *
  *        */
 
-void drawChar(int *x, int *y, int margin, char ch, unsigned short c)
+int isOutlinePixel(unsigned char* charfont, int x, int y)
+{
+	int xis0 = !x, xis7 = x == 7, yis0 = !y, yis7 = y == 7;
+	
+	if(xis0)
+	{
+		if(yis0)
+		{
+			return !(*charfont & 0x80) && ((*charfont & 0x40) || (charfont[1] & 0x80) || (charfont[1] & 0x40));
+		}
+		else if(yis7)
+		{
+			return !(charfont[7] & 0x80) && ((charfont[7] & 0x40) || (charfont[6] & 0x80) || (charfont[6] & 0x40));
+		}
+		else
+		{
+			return !(charfont[y] & 0x80) && (
+				(charfont[y - 1] & 0x80) || (charfont[y - 1] & 0x40) ||
+				(charfont[y] & 0x40) ||
+				(charfont[y + 1] & 0x80) || (charfont[y + 1] & 0x40));
+		}
+	}
+	else if(xis7)
+	{
+		if(yis0)
+		{
+			return !(*charfont & 0x01) && ((*charfont & 0x02) || (charfont[1] & 0x01) || (charfont[1] & 0x02));
+		}
+		else if(yis7)
+		{
+			return !(charfont[7] & 0x01) && ((charfont[7] & 0x02) || (charfont[6] & 0x01) || (charfont[6] & 0x02));
+		}
+		else
+		{
+			return !(charfont[y] & 0x01) && (
+				(charfont[y - 1] & 0x01) || (charfont[y - 1] & 0x02) ||
+				(charfont[y] & 0x02) ||
+				(charfont[y + 1] & 0x01) || (charfont[y + 1] & 0x02));
+		}
+	}
+	else
+	{
+		char b = 1 << (7 - x);
+		if(yis0)
+		{
+			return !(*charfont & b) && (
+				(*charfont & (b << 1)) || (*charfont & (b >> 1)) ||
+				(charfont[1] & (b << 1)) || (charfont[1] & b) || (charfont[1] & (b >> 1)));
+		}
+		else if(yis7)
+		{
+			return !(charfont[7] & b) && (
+				(charfont[7] & (b << 1)) || (charfont[7] & (b >> 1)) ||
+				(charfont[6] & (b << 1)) || (charfont[6] & b) || (charfont[6] & (b >> 1)));
+		}
+		else
+		{
+			return !(charfont[y] & b) && (
+				(charfont[y] & (b << 1)) || (charfont[y] & (b >> 1)) ||
+				(charfont[y - 1] & (b << 1)) || (charfont[y - 1] & b) || (charfont[y - 1] & (b >> 1)) ||
+				(charfont[y + 1] & (b << 1)) || (charfont[y + 1] & b) || (charfont[y + 1] & (b >> 1)));
+		}
+	}
+}
+
+void drawChar(int *x, int *y, int margin, char ch, unsigned short fc, unsigned short olc)
 {
 	int i, j;
 	unsigned char *charSprite;
 	if(ch == '\n')
 	{
 		*x = margin;
-		*y += 8;
+		*y += 10;
 	}
 	else if(*y < 239)
 	{
@@ -354,28 +419,30 @@ void drawChar(int *x, int *y, int margin, char ch, unsigned short c)
 			for(j = 7; j >= 0; j--)
 			{
 				if((charSprite[i] >> j) & 1)
-					setPixel(*x + (7 - j), *y + i, c);
+					setPixel(*x + (7 - j), *y + i, fc);
+				else if(isOutlinePixel(charSprite, 7 - j, i))
+					setPixel(*x + (7 - j), *y + i, olc);
 			}
 		}
-		*x += 8;
+		*x += 10;
 	}
 }
 
-void drawString(int *x, int *y, int _x, const char *str, unsigned short c)
+void drawString(int *x, int *y, int _x, const char *str, unsigned short fc, unsigned short olc)
 {
 	int i, max = strlen(str) + 1;
 	for(i = 0; i < max; i++)
-		drawChar(x, y, _x, str[i], c);
+		drawChar(x, y, _x, str[i], fc, olc);
 }
 
-void drawDecimal(int *x, int *y, int n, unsigned short c)
+void drawDecimal(int *x, int *y, int n, unsigned short fc, unsigned short olc)
 {
 	// Ints go to 4294967295
 	int divisor = 1000000000, num, numHasStarted = 0;
 	
 	if(n < 0)
 	{
-		drawChar(x, y, 0, '-', c);
+		drawChar(x, y, 0, '-', fc, olc);
 		n = -n;
 	}
 	while(divisor != 0)
@@ -384,30 +451,14 @@ void drawDecimal(int *x, int *y, int n, unsigned short c)
 		if(divisor == 1 || num != 0 || numHasStarted)
 		{
 			numHasStarted = 1;
-			drawChar(x, y, 0, num + '0', c);
+			drawChar(x, y, 0, num + '0', fc, olc);
 		}
 		n %= divisor;
 		divisor /= 10;
 	}
 }
 
-inline char findFormatting(char **s)
-{
-	if(**s == '%')
-	{
-		if(*(*s + 1) != 'd' && *(*s + 1) != 's')
-			return 0;
-		else
-			return *(*s + 1);
-	}
-	else
-	{
-		(*s)++;
-		return 0;
-	}
-}
-
-void drawStringF(int *x, int *y, int _x, unsigned short c, const char *s, ...)
+void drawStringF(int *x, int *y, int _x, unsigned short fc, unsigned short olc, const char *s, ...)
 {
 	va_list specialArgs;
 	char str[1200] = { 0 };
@@ -415,7 +466,7 @@ void drawStringF(int *x, int *y, int _x, unsigned short c, const char *s, ...)
 	
 	va_start(specialArgs, s);
 	vsprintf(str, s, specialArgs);
-	drawString(x, y, _x, str, c);
+	drawString(x, y, _x, str, fc, olc);
 	va_end(specialArgs);
 }
 

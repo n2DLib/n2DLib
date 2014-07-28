@@ -49,10 +49,10 @@ extern void drawLine(int, int, int, int, uint8_t, uint8_t, uint8_t);
 extern void drawPolygon(uint8_t, uint8_t, uint8_t, int, ...);
 extern void fillCircle(int, int, int, uint8_t, uint8_t, uint8_t);
 extern void fillEllipse(int, int, int, int, uint8_t, uint8_t, uint8_t);
-extern void drawString(int*, int*, int, const char*, unsigned short);
-extern void drawDecimal(int*, int*, int, unsigned short);
-extern void drawChar(int*, int*, int, char, unsigned short);
-extern void drawStringF(int*, int*, int, unsigned short, const char*, ...);
+extern void drawString(int*, int*, int, const char*, unsigned short, unsigned short);
+extern void drawDecimal(int*, int*, int, unsigned short, unsigned short);
+extern void drawChar(int*, int*, int, char, unsigned short, unsigned short);
+extern void drawStringF(int*, int*, int, unsigned short, unsigned short, const char*, ...);
 
 #define BUFF_BYTES_SIZE (320*240*2)
 extern unsigned short *BUFF_BASE_ADDRESS;

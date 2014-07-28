@@ -56,11 +56,11 @@ int main(int argc, char *argv[])
 		x = 0;
 		y = 120;
 		
-		drawString(&x, &y, x, "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqsrtuvwxyz\n0123456789<!%$#>\n", 0x07e0);
-		drawDecimal(&x, &y, -2134567841, 0x07e0);
+		drawString(&x, &y, x, "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqsrtuvwxyz\n0123456789<!%$#>\n", 0, 0xffff);
+		drawDecimal(&x, &y, -2134567841, 0x07e0, 0xf800);
 		x = 0;
 		y += 8;
-		drawStringF(&x, &y, x, 0x07e0, "Test ; number : %d, string : %s", 42, "the game");
+		drawStringF(&x, &y, x, 0x07e0, 0xf800, "Test ; number : %d\nstring : %s", 42, "the game");
 		
 		drawSpriteRotated(sprite, &spr, theta);
 		theta++;
