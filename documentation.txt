@@ -139,6 +139,10 @@ Draws a string of characters at the given position with the given color using n2
 MATH ROUTINES
 =============
 
+-- Type clamp(Type x, Type lowerBound, Type upperBound)
+
+Returns x if it's in the interval formed by [lowerBound, upperBound], else returns the corresponding bound.
+
 -- Fixed fixcos(Fixed angle)
 
 Returns the cosinus of a binary angle in fixed-point format.

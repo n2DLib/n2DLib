@@ -16,6 +16,7 @@ typedef struct
 #define fixtoi(x) ((x) >> 8)
 #define fixmul(x, y) ((x)*  (y) >> 8)
 #define fixdiv(x, y) (((x) << 8) / (y))
+#define clamp(x, a, b) min(max(x, a), b)
 
 #define fixsin(x) fixcos((x) - 64)
 
