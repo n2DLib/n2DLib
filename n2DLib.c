@@ -408,7 +408,7 @@ void drawChar(int *x, int *y, int margin, char ch, unsigned short fc, unsigned s
 	if(ch == '\n')
 	{
 		*x = margin;
-		*y += 10;
+		*y += 8;
 	}
 	else if(*y < 239)
 	{
@@ -424,7 +424,7 @@ void drawChar(int *x, int *y, int margin, char ch, unsigned short fc, unsigned s
 					setPixel(*x + (7 - j), *y + i, olc);
 			}
 		}
-		*x += 10;
+		*x += 8;
 	}
 }
 
