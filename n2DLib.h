@@ -26,10 +26,10 @@ extern "C" {
 
 extern Fixed fixcos(Fixed angle);
 extern void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out);
-extern inline int sq(int);
-extern inline Fixed fixsq(Fixed);
-extern inline int cube(int);
-extern inline Fixed fixcube(Fixed);
+extern int sq(int);
+extern Fixed fixsq(Fixed);
+extern int cube(int);
+extern Fixed fixcube(Fixed);
 
 extern void initBuffering();
 extern void updateScreen();
@@ -37,10 +37,10 @@ extern void deinitBuffering();
 extern void clearBufferB();
 extern void clearBufferW();
 extern void clearBuffer(unsigned short);
-extern inline unsigned short getPixel(const unsigned short*, unsigned int, unsigned int);
-extern inline void setPixelUnsafe(unsigned int, unsigned int, unsigned short);
-extern inline void setPixel(unsigned int, unsigned int, unsigned short);
-extern inline void setPixelRGB(unsigned int, unsigned int, unsigned char, unsigned char, unsigned char);
+extern unsigned short getPixel(const unsigned short*, unsigned int, unsigned int);
+extern void setPixelUnsafe(unsigned int, unsigned int, unsigned short);
+extern void setPixel(unsigned int, unsigned int, unsigned short);
+extern void setPixelRGB(unsigned int, unsigned int, unsigned char, unsigned char, unsigned char);
 extern void fillRect(int, int, int, int, unsigned short);
 extern void drawSprite(const unsigned short*, int, int);
 extern void drawSpritePart(const unsigned short*, int, int, const Rect*);
