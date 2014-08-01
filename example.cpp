@@ -44,9 +44,13 @@ int main(int argc, char *argv[])
 	
 	while(!isKeyPressed(KEY_NSPIRE_ESC))
 	{
-		fillCircle(160, 120, 80, 255, 0, 0);
-		fillEllipse(160, 120, 70, 60, 0, 0, 255);
-		drawPolygon(0, 255, 0, 4, 140, 100, 180, 100, 180, 140, 140, 140);
+		fillCircle(160, 120, 80, 0xf800);
+		fillEllipse(160, 120, 70, 60, 0x001f);
+		drawPolygon(0x07e0, 4, 140, 100, 180, 100, 180, 140, 140, 140);
+		drawHLine(80, -10, 330, 0xf800);
+		drawHLine(160, -10, 330, 0xf800);
+		drawVLine(106, -10, 250, 0xf800);
+		drawVLine(212, -10, 250, 0xf800);
 		
 		fillRect(-10, -10, 20, 20, 0xf800);
 		fillRect(310, -10, 20, 20, 0x07e0);

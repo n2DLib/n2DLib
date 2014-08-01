@@ -165,6 +165,50 @@ inline void setPixelRGB(unsigned int x, unsigned int y, unsigned char r, unsigne
 		*((unsigned short*)BUFF_BASE_ADDRESS + x + y * 320) = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
 }
 
+void drawHLine(int y, int x1, int x2, unsigned short c)
+{
+	unsigned int _x1, _x2;
+	if((x1 & x2) >> 31 || x1 + x2 >= 640 || (unsigned)y > 239)
+	{
+		return;
+	}
+	
+	if(x1 < x2)
+	{
+		_x1 = max(x1, 0);
+		_x2 = min(x2, 319);
+	}
+	else
+	{
+		_x1 = max(x2, 0);
+		_x2 = min(x1, 319);
+	}
+	for(; _x1 <= _x2; _x1++)
+		setPixelUnsafe(_x1, y, c);
+}
+
+void drawVLine(int x, int y1, int y2, unsigned short c)
+{
+	unsigned int _y1, _y2;
+	if((y1 & y2) >> 31 || y1 + y2 >= 480 || (unsigned)x > 319)
+	{
+		return;
+	}
+	
+	if(y1 < y2)
+	{
+		_y1 = max(y1, 0);
+		_y2 = min(y2, 239);
+	}
+	else
+	{
+		_y1 = max(y2, 0);
+		_y2 = min(y1, 239);
+	}
+	for(; _y1 <= _y2; _y1++)
+		setPixelUnsafe(x, _y1, c);
+}
+
 void fillRect(int x, int y, int w, int h, unsigned short c)
 {
 	unsigned int _x = max(x, 0), _y = max(y, 0), _w = min(320 - _x, w - _x + x), _h = min(240 - _y, h - _y + y), i, j;
@@ -172,7 +216,7 @@ void fillRect(int x, int y, int w, int h, unsigned short c)
 	{
 		for(j = _y; j < _y + _h; j++)
 			for(i = _x; i < _x + _w; i++)
-				*((unsigned short*)BUFF_BASE_ADDRESS + i + j * 320) = c;
+				setPixelUnsafe(i, j, c);
 	}
 }
 
@@ -257,7 +301,7 @@ void drawSpriteRotated(const unsigned short* source, const Rect* sr, Fixed angle
  *  Geometry  *
  *            */
  
-void drawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
+void drawLine(int x1, int y1, int x2, int y2, unsigned short c)
 {
 	int dx = abs(x2-x1);
 	int dy = abs(y2-y1);
@@ -268,7 +312,7 @@ void drawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 
 	while (!(x1 == x2 && y1 == y2))
 	{
-		setPixelRGB(x1,y1,r,g,b);
+		setPixel(x1,y1,c);
 		e2 = 2*err;
 		if (e2 > -dy)
 		{		 
@@ -283,7 +327,7 @@ void drawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 	}
 }
 
-void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int nombreDePoints, ...)
+void drawPolygon(unsigned short c, int nombreDePoints, ...)
 // r, g, b, <number of points you want (4 for a square, for instance, not 8 because of x and y...)>, <x1,y1,x2,y2...>
 {
 	// the number of arguments in the <...> must be even
@@ -305,31 +349,31 @@ void drawPolygon(uint8_t r, uint8_t g, uint8_t b, int nombreDePoints, ...)
 	
 	for (i = 0; i < nombreDePoints*2 - 2; i+=2)
 	{
-		drawLine(*(pointsList + i), *(pointsList + i + 1), *(pointsList + i + 2), *(pointsList + i + 3), r, g, b);
+		drawLine(*(pointsList + i), *(pointsList + i + 1), *(pointsList + i + 2), *(pointsList + i + 3), c);
 	}
-	drawLine(*(pointsList + nombreDePoints*2 - 2), *(pointsList + nombreDePoints*2 - 1), *(pointsList), *(pointsList + 1), r, g, b);
+	drawLine(*(pointsList + nombreDePoints*2 - 2), *(pointsList + nombreDePoints*2 - 1), *(pointsList), *(pointsList + 1), c);
 	va_end(ap);
 	free(pointsList);
 }
 
-void fillCircle(int x, int y, int radius, uint8_t r, uint8_t g, uint8_t b)
+void fillCircle(int x, int y, int radius, unsigned short c)
 {
 	int i,j;
 	for(j=-radius; j<=radius; j++)
 		for(i=-radius; i<=radius; i++)
 			if(i*i+j*j <= radius*radius)
-				setPixelRGB(x + i, y + j, r, g, b);               
+				setPixel(x + i, y + j, c);               
 }
 
 /*  /!\ for circle and ellispe, the x and y must be the center of the shape, not the top-left point   /!\  */
 
-void fillEllipse(int x, int y, int w, int h, uint8_t r, uint8_t g, uint8_t b)
+void fillEllipse(int x, int y, int w, int h, unsigned short c)
 {
 	int i,j;
 	for(j=-h; j<=h; j++)
 		for(i=-w; i<=w; i++)
 			if(i*i*h*h+j*j*w*w <= h*h*w*w)
-				setPixelRGB(x + i, y + j, r, g, b);
+				setPixel(x + i, y + j, c);
 }
 
 /*        *
