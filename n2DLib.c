@@ -60,9 +60,9 @@ void updateScreen()
 		{
 			c = *src++;
 			// c holds two 16-bits colors, decompose them while keeping them that way
- 			c = ((((c & 0x1f) << 3) + (((c >> 5) & 0x3f) << 2) + (((c >> 11) & 0x1f)) << 3) & 0xffff) + 
-				((((((c >> 16) & 0x1f) << 3) + (((c >> 21) & 0x3f) << 2) + (((c >> 27) & 0x1f)) << 3) & 0xffff) << 16);
-			*dest++ = ~c;
+			c = ~c;
+			*dest++ = (( ((c & 0x1f) << 3) + (((c >> 5) & 0x3f) << 2) + (((c >> 11) & 0x1f) << 3) ) & 0xffff) + 
+				((( (((c >> 16) & 0x1f) << 3) + (((c >> 21) & 0x3f) << 2) + (((c >> 27) & 0x1f) << 3)) & 0xffff) << 16);
 		}
 		memcpy(ALT_SCREEN_BASE_ADDRESS, INV_BUFF, BUFF_BYTES_SIZE);
 	}
