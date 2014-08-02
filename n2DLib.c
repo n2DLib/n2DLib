@@ -514,6 +514,60 @@ void drawStringF(int *x, int *y, int _x, unsigned short fc, unsigned short olc, 
 	va_end(specialArgs);
 }
 
+/*               *
+ * Miscellaneous *
+ *               */
+int get_key_pressed(t_key* report)
+{
+	unsigned short rowmap;
+	int col, row;
+	unsigned short *KEY_DATA = (unsigned short*)0x900E0010;
+	int gotKey = 0;
+	
+	report->row = report->tpad_row = _KEY_DUMMY_ROW;
+	report->col = report->tpad_col = _KEY_DUMMY_COL;
+	report->tpad_arrow = TPAD_ARROW_NONE;
+
+	// Touchpad and clickpad keyboards have different keymapping
+	for(row = 0; row < 8; row++)
+	{
+		rowmap = KEY_DATA[row];
+		for(col = 1; col <= 0x400; col <<= 1)
+		{
+			if(rowmap & col)
+			{
+				gotKey = 1;
+				break;
+			}
+		}
+		if(gotKey) break;
+	}
+	if(gotKey)
+	{
+		row *= 2;
+		row += 0x10;
+		if(is_touchpad)
+		{
+			report->tpad_row = row;
+			report->tpad_col = col;
+		}
+		else
+		{
+			report->row = row;
+			report->col = col;
+		}
+		return 1;
+	}
+	else
+		return 0;
+}
+
+inline int isKey(t_key k1, t_key k2)
+{
+	return is_touchpad ? (k1.tpad_arrow == k2.tpad_arrow ? k1.tpad_row == k2.tpad_row && k1.tpad_col == k2.tpad_col : 0 )
+						: k1.row == k2.row && k1.col == k2.col;
+}
+
 #ifdef __cplusplus
 }
 #endif

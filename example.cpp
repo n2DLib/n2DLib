@@ -38,12 +38,19 @@ int main(int argc, char *argv[])
 	
 	initBuffering();
 	clearBufferB();
+	updateScreen();
 	
 	spr.x = 160;
 	spr.y = 120;
 	
-	while(!isKeyPressed(KEY_NSPIRE_ESC))
+	t_key quitKey;
+	
+	get_key_pressed(&quitKey);
+	
+	while(!isKey(quitKey, KEY_NSPIRE_ESC))
 	{
+		get_key_pressed(&quitKey);
+		
 		fillCircle(160, 120, 80, 0xf800);
 		fillEllipse(160, 120, 70, 60, 0x001f);
 		drawPolygon(0x07e0, 4, 140, 100, 180, 100, 180, 140, 140, 140);
