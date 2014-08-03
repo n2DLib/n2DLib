@@ -7,9 +7,9 @@ The lib uses buffering to display smoothly ; that means that all drawing is done
 
 All colors, unless specified, must be in R5G6B5 format, meaning a 16-bits number organized this way :
 
-Bit   |15|14|13|12|11|10|9|8|7|6|5|4|3|2|1|0
-------|--|--|--|--|--|--|-|-|-|-|-|-|-|-|-|-
-Color |R |R |R |R |R |G |G|G|G|G|G|B|B|B|B|B
+Bit   | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 
+------|----|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---
+Color | R  | R  | R  | R  | R  | G  | G | G | G | G | G | B | B | B | B | B 
 
 n2DLib uses a variation on the NTI image format to store images. All images must be arrays of unsigned short organized this way :
 
@@ -60,7 +60,6 @@ See the "Key detection functions" part of the doc to see what you can do. You do
 Summary of commands
 ===================
 
-==================
 GRAPHICAL ROUTINES
 ==================
 
@@ -136,7 +135,6 @@ GRAPHICAL ROUTINES
 
   Copies the content of the buffer to the screen. This does not clear the buffer.
 
-=============
 TEXT ROUTINES
 =============
 
@@ -156,7 +154,6 @@ TEXT ROUTINES
 
   Draws a string of characters at the given position with the given front and outline color using n2DLib's built-in font. Does clipping and supports newlines with \n and printf-like arguments. When \n is encountered in the string, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would.
 
-=============
 MATH ROUTINES
 =============
 
@@ -192,7 +189,6 @@ MATH ROUTINES
 
   Rotates a point on the 2D plane given ca the cosinus of the rotation angle and sa the sinus of the rotation angle. This takes x and y as separate arguments and writes the two resulting coordinates to Rect* out.
 
-=======================
 KEY DETECTION FUNCTIONS
 =======================
 
