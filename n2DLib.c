@@ -270,16 +270,16 @@ void drawSpriteRotated(const unsigned short* source, const Rect* sr, Fixed angle
 	lsp.x = fixmul(itofix(fr.x - sr->x), dX) + fixmul(itofix(fr.y - sr->y), -dY);
 	lsp.y = fixmul(itofix(fr.x - sr->x), dY) + fixmul(itofix(fr.y - sr->y), dX);
 	
-	for(cp.y = fr.y; cp.y < fr.h; cp.y++)
+	for(cp.y = fr.y; cp.y <= fr.h; cp.y++)
 	{
 		cdrp.x = lsp.x;
 		cdrp.y = lsp.y;
 		
-		for(cp.x = fr.x; cp.x < fr.w; cp.x++)
+		for(cp.x = fr.x; cp.x <= fr.w; cp.x++)
 		{
 			if(cp.x >= 0 && cp.x < 320 && cp.y >= 0 && cp.y < 240)
 			{
-				if(abs(fixtoi(cdrp.x)) < source[0] / 2 && abs(fixtoi(cdrp.y)) < source[1] / 2)
+				if(abs(fixtoi(cdrp.x)) <= source[0] / 2 && abs(fixtoi(cdrp.y)) <= source[1] / 2)
 				{
 					currentPixel = getPixel(source, fixtoi(cdrp.x) + source[0] / 2, fixtoi(cdrp.y) + source[1] / 2);
 					if(currentPixel != source[2])
