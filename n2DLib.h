@@ -17,7 +17,7 @@ typedef struct
 #define fixmul(x, y) ((x)*  (y) >> 8)
 #define fixdiv(x, y) (((x) << 8) / (y))
 #define clamp(x, a, b) min(max(x, a), b)
-
+#define sign(x) ((x) < 0)
 #define fixsin(x) fixcos((x) - 64)
 
 #ifdef __cplusplus

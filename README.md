@@ -249,6 +249,12 @@ MATH ROUTINES
 
   Rotates a point on the 2D plane given ca the cosinus of the rotation angle and sa the sinus of the rotation angle. This takes x and y as separate arguments and writes the two resulting coordinates to Rect* out.
 
+- ```C
+  int sign(x)
+  ```
+  
+  Returns 1 if x is negative, 0 otherwise.
+
 KEY DETECTION FUNCTIONS
 =======================
 
