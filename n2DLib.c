@@ -531,7 +531,7 @@ int get_key_pressed(t_key* report)
 	// Touchpad and clickpad keyboards have different keymapping
 	for(row = 0; row < 8; row++)
 	{
-		rowmap = KEY_DATA[row];
+		rowmap = is_cx ? KEY_DATA[row] : ~KEY_DATA[row];
 		for(col = 1; col <= 0x400; col <<= 1)
 		{
 			if(rowmap & col)

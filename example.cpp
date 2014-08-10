@@ -45,12 +45,11 @@ int main(int argc, char *argv[])
 	
 	t_key quitKey;
 	
-	get_key_pressed(&quitKey);
+	while(!get_key_pressed(&quitKey));
+	wait_no_key_pressed();
 	
-	while(!isKey(quitKey, KEY_NSPIRE_ESC))
+	while(!isKeyPressed(quitKey))
 	{
-		get_key_pressed(&quitKey);
-		
 		fillCircle(160, 120, 80, 0xf800);
 		fillEllipse(160, 120, 70, 60, 0x001f);
 		drawPolygon(0x07e0, 4, 140, 100, 180, 100, 180, 140, 140, 140);
