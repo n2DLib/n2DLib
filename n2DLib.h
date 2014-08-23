@@ -46,6 +46,7 @@ extern void drawVLine(int, int, int, unsigned short);
 extern void fillRect(int, int, int, int, unsigned short);
 extern void drawSprite(const unsigned short*, int, int);
 extern void drawSpritePart(const unsigned short*, int, int, const Rect*);
+extern void drawSpriteScaled(const unsigned short*, const Rect*);
 extern void drawSpriteRotated(const unsigned short*, const Rect*, Fixed);
 extern void drawLine(int, int, int, int, unsigned short);
 extern void drawPolygon(unsigned short, int, ...);

@@ -72,8 +72,12 @@ int main(int argc, char *argv[])
 		y += 8;
 		drawStringF(&x, &y, x, 0x07e0, 0xf800, "Test ; number : %d\nstring : %s", 42, "the game");
 		
+		spr.w = theta / 2;
+		spr.h = theta / 2;
+		drawSpriteScaled(sprite, &spr);
 		drawSpriteRotated(sprite, &spr, theta);
 		theta++;
+		theta &= 255;
 		
 		updateScreen();
 	}

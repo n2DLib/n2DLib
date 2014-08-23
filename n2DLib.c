@@ -229,7 +229,9 @@ void drawSprite(const unsigned short *src, int _x, int _y)
 		{
 			if(src[c] != src[2])
 				setPixel(x, y, src[c]);
+			if(x > 319) break;
 		}
+		if(y > 239) break;
 	}
 }
 
@@ -244,7 +246,30 @@ void drawSpritePart(const unsigned short *src, int _x, int _y, const Rect* part)
 			c = getPixel(src, z, t);
 			if(c != src[2])
 				setPixel(x, y, c);
+			if(x > 319) break;
 		}
+		if(y > 239) break;
+	}
+}
+
+void drawSpriteScaled(const unsigned short* source, const Rect* info)
+{
+	Fixed dx = itofix(source[0]) / info->w;
+	Fixed dy = itofix(source[1]) / info->h;
+	int x, y, _x = info->x + info->w / 2, _y = info->y + info->h / 2;
+	Fixed tx = 0, ty = 0;
+	unsigned short c;
+	
+	for(y = info->y - info->h / 2; y < _y; y++, ty += dy)
+	{
+		for(x = info->x - info->w / 2, tx = 0; x < _x; x++, tx += dx)
+		{
+			c = getPixel(source, fixtoi(tx), fixtoi(ty));
+			if(c != source[2])
+				setPixel(x, y, c);
+			if(fixtoi(x) > 319) break;
+		}
+		if(fixtoi(y) > 239) break;
 	}
 }
 

@@ -124,6 +124,12 @@ GRAPHICAL ROUTINES
   Draws a sprite rotated by a given angle at the coordinates given by Rect* sr.
 
 - ```C
+  void drawSpriteScaled(unsigned short* source, Rect* info)
+  ```
+  
+  Draws a sprite by scaling it so that it fits perfectly in the rectangle given by Rect* info.
+
+- ```C
   void fillCircle(int x, int y, int radius, unsigned short c)
   ```
 
