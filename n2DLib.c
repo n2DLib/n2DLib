@@ -267,9 +267,9 @@ void drawSpriteScaled(const unsigned short* source, const Rect* info)
 			c = getPixel(source, fixtoi(tx), fixtoi(ty));
 			if(c != source[2])
 				setPixel(x, y, c);
-			if(fixtoi(x) > 319) break;
+			if(x > 319) break;
 		}
-		if(fixtoi(y) > 239) break;
+		if(y > 239) break;
 	}
 }
 
