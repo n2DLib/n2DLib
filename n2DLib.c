@@ -229,7 +229,6 @@ void drawSprite(const unsigned short *src, int _x, int _y)
 		{
 			if(src[c] != src[2])
 				setPixel(x, y, src[c]);
-			if(x > 319) break;
 		}
 		if(y > 239) break;
 	}
