@@ -56,6 +56,8 @@ extern void drawString(int*, int*, int, const char*, unsigned short, unsigned sh
 extern void drawDecimal(int*, int*, int, unsigned short, unsigned short);
 extern void drawChar(int*, int*, int, char, unsigned short, unsigned short);
 extern void drawStringF(int*, int*, int, unsigned short, unsigned short, const char*, ...);
+extern int numberWidth(int);
+extern int stringWidth(const char*);
 extern int get_key_pressed(t_key*);
 extern int isKey(t_key, t_key);
 

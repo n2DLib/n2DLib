@@ -505,8 +505,9 @@ void drawString(int *x, int *y, int _x, const char *str, unsigned short fc, unsi
 
 void drawDecimal(int *x, int *y, int n, unsigned short fc, unsigned short olc)
 {
-	// Ints go to 4294967295
-	int divisor = 1000000000, num, numHasStarted = 0;
+	// Ints are in [-2147483648, 2147483647]
+	//               |        |
+	int divisor =    1000000000, num, numHasStarted = 0;
 	
 	if(n < 0)
 	{
@@ -536,6 +537,37 @@ void drawStringF(int *x, int *y, int _x, unsigned short fc, unsigned short olc, 
 	vsprintf(str, s, specialArgs);
 	drawString(x, y, _x, str, fc, olc);
 	va_end(specialArgs);
+}
+
+int numberWidth(int n)
+{
+	// Ints are in [-2147483648, 2147483647]
+	int divisor = 10, result = 8;
+	
+	if(n < 0)
+	{
+		result += 8;
+		n = -n;
+	}
+	
+	while(1)
+	{
+		if(n < divisor)
+			return result;
+		result += 8;
+		divisor *= 10;
+	}
+}
+
+int stringWidth(const char* s)
+{
+	int i, result = 0, size = strlen(s);
+	for(i = 0; i < size; i++)
+	{
+		if(s[i] >= 0x20)
+			result += 8;
+	}
+	return result;
 }
 
 /*               *

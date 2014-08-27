@@ -203,6 +203,19 @@ TEXT ROUTINES
   ```
 
   Draws a string of characters at the given position with the given front and outline color using n2DLib's built-in font. Does clipping and supports newlines with \n and printf-like arguments. When \n is encountered in the string, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would.
+  
+- ```C
+  int stringWidth(const char* s)
+  ```
+  
+  Returns the width of the string in pixels when using n2DLib's built-in font.
+  
+- ```C
+  int numberWitdh(int n)
+  ```
+  
+  Returns the width of the decimal in pixels when drawn to the screen using n2DLib's built-in font.
+
 
 MATH ROUTINES
 =============
