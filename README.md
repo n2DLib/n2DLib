@@ -118,10 +118,10 @@ GRAPHICAL ROUTINES
   Draws part of an image to the given coordinates. The routine draws what of the sprite is in the rectangle given by Rect* part.
 
 - ```C
-  void drawSpriteRotated(unsigned short* source, Rect* sr, Fixed angle)
+  void drawSpriteRotated(unsigned short* source, Rect* sr, Rect* rc, Fixed angle)
   ```
 
-  Draws a sprite rotated by a given angle at the coordinates given by Rect* sr.
+  Draws a sprite rotated by a given angle at the coordinates given by Rect* sr, so that the rotation of the sprite is performed around the point Rect *rc, which is relative to the sprite itself. The center of the rotation will always be displayed at the coordinates Rect* sr. For example, if rc->x and rc->y are half the sprite's width and height, the sprite will be rotated around its center.
 
 - ```C
   void drawSpriteScaled(unsigned short* source, Rect* info)
