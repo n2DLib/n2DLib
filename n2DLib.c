@@ -272,17 +272,21 @@ void drawSpriteScaled(const unsigned short* source, const Rect* info)
 	}
 }
 
-void drawSpriteRotated(const unsigned short* source, const Rect* sr, Fixed angle)
+void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect* rc, Fixed angle)
 {
 	Rect upleft, upright, downleft, downright;
 	Rect fr;
 	unsigned short currentPixel;
 	Fixed dX = fixcos(angle), dY = fixsin(angle);
 	
-	rotate(-source[0] / 2, -source[1] / 2, dX, dY, &upleft);
-	rotate(source[0] / 2, -source[1] / 2, dX, dY, &upright);
-	rotate(-source[0] / 2, source[1] / 2, dX, dY, &downleft);
-	rotate(source[0] / 2, source[1] / 2, dX, dY, &downright);
+	//~ rotate(-source[0] / 2, -source[1] / 2, dX, dY, &upleft);
+	//~ rotate(source[0] / 2, -source[1] / 2, dX, dY, &upright);
+	//~ rotate(-source[0] / 2, source[1] / 2, dX, dY, &downleft);
+	//~ rotate(source[0] / 2, source[1] / 2, dX, dY, &downright);
+	rotate(-rc->x, -rc->y, dX, dY, &upleft);
+	rotate(source[0] - rc->x, -rc->y, dX, dY, &upright);
+	rotate(-rc->x, source[1] - rc->y, dX, dY, &downleft);
+	rotate(source[0] - rc->x, source[1] - rc->y, dX, dY, &downright);
 	
 	fr.x = min(min(min(upleft.x, upright.x), downleft.x), downright.x) + sr->x;
 	fr.y = min(min(min(upleft.y, upright.y), downleft.y), downright.y) + sr->y;
@@ -303,14 +307,14 @@ void drawSpriteRotated(const unsigned short* source, const Rect* sr, Fixed angle
 		{
 			if(cp.x >= 0 && cp.x < 320 && cp.y >= 0 && cp.y < 240)
 			{
-				if(abs(fixtoi(cdrp.x)) <= source[0] / 2 && abs(fixtoi(cdrp.y)) <= source[1] / 2)
-				{
-					currentPixel = getPixel(source, fixtoi(cdrp.x) + source[0] / 2, fixtoi(cdrp.y) + source[1] / 2);
+				//~ if(abs(fixtoi(cdrp.x)) <= source[0] / 2 && abs(fixtoi(cdrp.y)) <= source[1] / 2)
+				//~ {
+					currentPixel = getPixel(source, fixtoi(cdrp.x) + rc->x, fixtoi(cdrp.y) + rc->y);
 					if(currentPixel != source[2])
 					{
 						setPixelUnsafe(cp.x, cp.y, currentPixel);
 					}
-				}
+				//~ }
 			}
 			cdrp.x += dX;
 			cdrp.y += dY;

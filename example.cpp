@@ -33,7 +33,8 @@ static unsigned short sprite[] = {
 int main(int argc, char *argv[])
 {
 	Fixed theta = 0;
-	Rect spr;
+	//~ Rect spr, nullRect = {sprite[0] / 2, sprite[1] / 2, 0, 0};
+	Rect spr, nullRect = {0, 0, 0, 0};
 	int x, y;
 	
 	initBuffering();
@@ -75,7 +76,7 @@ int main(int argc, char *argv[])
 		spr.w = theta / 2;
 		spr.h = theta / 2;
 		drawSpriteScaled(sprite, &spr);
-		drawSpriteRotated(sprite, &spr, theta);
+		drawSpriteRotated(sprite, &spr, &nullRect, theta);
 		theta++;
 		theta &= 255;
 		
