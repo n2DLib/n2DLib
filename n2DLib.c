@@ -274,10 +274,18 @@ void drawSpriteScaled(const unsigned short* source, const Rect* info)
 
 void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect* rc, Fixed angle)
 {
+	Rect* defaultRect;
 	Rect upleft, upright, downleft, downright;
 	Rect fr;
 	unsigned short currentPixel;
 	Fixed dX = fixcos(angle), dY = fixsin(angle);
+	
+	if(rc == NULL)
+	{
+		defaultRect->x = source[0] / 2;
+		defaultRect->y = source[1] / 2;
+		rc = defaultRect;
+	}
 	
 	//~ rotate(-source[0] / 2, -source[1] / 2, dX, dY, &upleft);
 	//~ rotate(source[0] / 2, -source[1] / 2, dX, dY, &upright);
