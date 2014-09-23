@@ -287,10 +287,6 @@ void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect*
 		rc = defaultRect;
 	}
 	
-	//~ rotate(-source[0] / 2, -source[1] / 2, dX, dY, &upleft);
-	//~ rotate(source[0] / 2, -source[1] / 2, dX, dY, &upright);
-	//~ rotate(-source[0] / 2, source[1] / 2, dX, dY, &downleft);
-	//~ rotate(source[0] / 2, source[1] / 2, dX, dY, &downright);
 	rotate(-rc->x, -rc->y, dX, dY, &upleft);
 	rotate(source[0] - rc->x, -rc->y, dX, dY, &upright);
 	rotate(-rc->x, source[1] - rc->y, dX, dY, &downleft);
