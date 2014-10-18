@@ -274,7 +274,7 @@ void drawSpriteScaled(const unsigned short* source, const Rect* info)
 
 void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect* rc, Fixed angle)
 {
-	Rect* defaultRect;
+	Rect* defaultRect = NULL;
 	Rect upleft, upright, downleft, downright;
 	Rect fr;
 	unsigned short currentPixel;
