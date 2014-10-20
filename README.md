@@ -13,7 +13,7 @@ Color | R  | R  | R  | R  | R  | G  | G | G | G | G | G | B | B | B | B | B
 
 n2DLib uses a variation on the NTI image format to store images. All images must be arrays of unsigned short organized this way :
 
-Entry |       0        |       1        |       2         |   3-...  
+Entry |        0       |        1       |         2       |   3-...
 ------|----------------|----------------|-----------------|----------
 Use   | Width in pixels|Height in pixels|Transparent color|Image data
 
@@ -29,13 +29,13 @@ Since fixed-point numbers are special numbers, they can't interact normally with
            |integer|fixed-point|
 -----------|-------|-----------|
 integer    |  +-*/ |     *     |
-fixed-point|   */  |    +-     |
+fixed-point|   */  |     +-    |
 
 You need a special routine to :
-- add an integer to a fixed-point number
-- divide an integer by a fixed-point number
-- multiply a fixed-point number by another fixed-point number
-- divide a fixed-point number by another fixed-point number
+add an integer to a fixed-point number
+divide an integer by a fixed-point number
+multiply a fixed-point number by another fixed-point number
+divide a fixed-point number by another fixed-point number
 
 See the "Math routines" part of the doc to find how to do all of this.
 
@@ -46,8 +46,8 @@ n2DLib provides additional key detection functions to those already provided by 
 
 ```C
 typedef struct {
-  int row, col, tpad_row, tpad_col;
-  tpad_arrow_t tpad_arrow;
+int row, col, tpad_row, tpad_col;
+tpad_arrow_t tpad_arrow;
 } t_key;
 ```
 
@@ -63,228 +63,228 @@ Summary of commands
 GRAPHICAL ROUTINES
 ==================
 
-- ```C
-  void clearBufferB()
-  ```
+```C
+void clearBufferB()
+```
 
-  Fills the buffer with black color.
+Fills the buffer with black color.
 
-- ```C
-  void clearBufferW()
-  ```
+```C
+void clearBufferW()
+```
 
-  Fills the buffer with white color.
+Fills the buffer with white color.
 
-- ```C
-  void clearBuffer(unsigned short c)
-  ```
+```C
+void clearBuffer(unsigned short c)
+```
 
-  Fills the buffer with the given color.
+Fills the buffer with the given color.
 
-- ```C
-  unsigned short getPixel(unsigned short *src, unsigned int x, unsigned int y)
-  ```
+```C
+unsigned short getPixel(unsigned short *src, unsigned int x, unsigned int y)
+```
 
-  Returns the color of a given pixel in an image, or the transparent color of this image if the coordinates given are out-of-bounds.
+Returns the color of a given pixel in an image, or the transparent color of this image if the coordinates given are out-of-bounds.
 
-- ```C
-  void deinitBuffering()
-  ```
+```C
+void deinitBuffering()
+```
 
-  Frees memory used by the buffering functionalities. Call this as the very last instruction of your program (excepting return).
+Frees memory used by the buffering functionalities. Call this as the very last instruction of your program (excepting return).
 
-- ```C
-  void drawLine(int x1, int y1, int x2, int y2, unsigned short c)
-  ```
+```C
+void drawLine(int x1, int y1, int x2, int y2, unsigned short c)
+```
 
-  Draws a line between two points of the given color.
+Draws a line between two points of the given color.
 
-- ```C
-  void drawPolygon(unsigned short c, int pointsNb, ...)
-  ```
+```C
+void drawPolygon(unsigned short c, int pointsNb, ...)
+```
 
-  Draws a wired polygon of the given color using a list of pointsNb coordinates (first x, then y).
+Draws a wired polygon of the given color using a list of pointsNb coordinates (first x, then y).
 
-- ```C
-  void drawSprite(unsigned short *src, unsigned int _x, unsigned int _y)
-  ```
+```C
+void drawSprite(unsigned short *src, unsigned int _x, unsigned int _y)
+```
 
-  Draws an image to the given coordinates.
+Draws an image to the given coordinates.
 
-- ```C
-  void drawSpritePart(unsigned short *src, unsigned int _x, unsigned int _y, Rect* part)
-  ```
+```C
+void drawSpritePart(unsigned short *src, unsigned int _x, unsigned int _y, Rect* part)
+```
 
-  Draws part of an image to the given coordinates. The routine draws what of the sprite is in the rectangle given by Rect* part.
+Draws part of an image to the given coordinates. The routine draws what of the sprite is in the rectangle given by Rect* part.
 
-- ```C
-  void drawSpriteRotated(unsigned short* source, Rect* sr, Rect* rc, Fixed angle)
-  ```
+```C
+void drawSpriteRotated(unsigned short* source, Rect* sr, Rect* rc, Fixed angle)
+```
 
-  Draws a sprite rotated by a given angle at the coordinates given by Rect* sr, so that the rotation of the sprite is performed around the point Rect *rc, which is relative to the sprite itself. The center of the rotation will always be displayed at the coordinates Rect* sr. For example, if rc->x and rc->y are half the sprite's width and height, the sprite will be rotated around its center. You can also pass NULL as Rect* rc to rotate the image around its center.
+Draws a sprite rotated by a given angle at the coordinates given by Rect* sr, so that the rotation of the sprite is performed around the point Rect *rc, which is relative to the sprite itself. The center of the rotation will always be displayed at the coordinates Rect* sr. For example, if rc->x and rc->y are half the sprite's width and height, the sprite will be rotated around its center. You can also pass NULL as Rect* rc to rotate the image around its center.
 
-- ```C
-  void drawSpriteScaled(unsigned short* source, Rect* info)
-  ```
-  
-  Draws a sprite by scaling it so that it fits perfectly in the rectangle given by Rect* info.
+```C
+void drawSpriteScaled(unsigned short* source, Rect* info)
+```
 
-- ```C
-  void fillCircle(int x, int y, int radius, unsigned short c)
-  ```
+Draws a sprite by scaling it so that it fits perfectly in the rectangle given by Rect* info.
 
-  Fills a circle of the given color.
+```C
+void fillCircle(int x, int y, int radius, unsigned short c)
+```
 
-- ```C
-  void fillEllipse(int x, int y, int w, int h, unsigned short c)
-  ```
+Fills a circle of the given color.
 
-  Fills an ellipse of the given size with the given color.
+```C
+void fillEllipse(int x, int y, int w, int h, unsigned short c)
+```
 
-- ```C
-  void fillRect(int x, int y, int w, int h, unsigned short c)
-  ```
+Fills an ellipse of the given size with the given color.
 
-  Fills a rectangle of the given dimensions with the given color ; does clipping.
+```C
+void fillRect(int x, int y, int w, int h, unsigned short c)
+```
 
-- ```C
-  void initBuffering()
-  ```
+Fills a rectangle of the given dimensions with the given color ; does clipping.
 
-  Initializes the buffering functionalities. Call this as the very first instruction of your program if you want to use n2DLib's buffering.
+```C
+void initBuffering()
+```
 
-- ```C
-  void setPixel(unsigned int x, unsigned int y, unsigned short c)
-  ```
+Initializes the buffering functionalities. Call this as the very first instruction of your program if you want to use n2DLib's buffering.
 
-  Sets a pixel to the given color after verifying the pixel is actually in the screen's dimensions.
+```C
+void setPixel(unsigned int x, unsigned int y, unsigned short c)
+```
 
-- ```C
-  void setPixelRGB(unsigned int x, unsigned int y, unsigned char r, unsigned char g, unsigned char b)
-  ```
+Sets a pixel to the given color after verifying the pixel is actually in the screen's dimensions.
 
-  Sets a pixel to the given color after verifying the pixel is actually in the screen's dimensions and using three color components.
+```C
+void setPixelRGB(unsigned int x, unsigned int y, unsigned char r, unsigned char g, unsigned char b)
+```
 
-- ```C
-  void setPixelUnsafe(unsigned int x, unsigned int y, unsigned short c)
-  ```
+Sets a pixel to the given color after verifying the pixel is actually in the screen's dimensions and using three color components.
 
-  Sets a pixel to the given color, but does not make sure the pixel is in the screen's dimensions. Faster than setPixel, but use only if you know you can't draw out of the screen.
+```C
+void setPixelUnsafe(unsigned int x, unsigned int y, unsigned short c)
+```
 
-- ```C
-  void updateScreen()
-  ```
+Sets a pixel to the given color, but does not make sure the pixel is in the screen's dimensions. Faster than setPixel, but use only if you know you can't draw out of the screen.
 
-  Copies the content of the buffer to the screen. This does not clear the buffer.
+```C
+void updateScreen()
+```
+
+Copies the content of the buffer to the screen. This does not clear the buffer.
 
 TEXT ROUTINES
 =============
 
-- ```C
-  void drawChar(int *x, int *y, int margin, char ch, unsigned short fc, unsigned short olc)
-  ```
+```C
+void drawChar(int *x, int *y, int margin, char ch, unsigned short fc, unsigned short olc)
+```
 
-  Draws a single character at the given position with the given front and outline color using n2DLib's built-in font. Does clipping and supports newlines with \n. When \n is passed as ch, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would.
+Draws a single character at the given position with the given front and outline color using n2DLib's built-in font. Does clipping and supports newlines with \n. When \n is passed as ch, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would.
 
-- ```C
-  void drawDecimal(int *x, int *y, int n, unsigned short fc, unsigned short olc)
-  ```
+```C
+void drawDecimal(int *x, int *y, int n, unsigned short fc, unsigned short olc)
+```
 
-  Draws a signed integer at the given position with the given front and outline color using n2DLib's built-in font. Does clipping. X and Y are modified like a cursor position would. Use this as a fast way to display integers only.
+Draws a signed integer at the given position with the given front and outline color using n2DLib's built-in font. Does clipping. X and Y are modified like a cursor position would. Use this as a fast way to display integers only.
 
-- ```C
-  void drawString(int *x, int *y, int margin, const char *str, unsigned short fc, unsigned short olc)
-  ```
+```C
+void drawString(int *x, int *y, int margin, const char *str, unsigned short fc, unsigned short olc)
+```
 
-  Draws a string of characters at the given position with the given front and outline color using n2DLib's built-in font. Does clipping and supports newlines with \n. When \n is encountered in the string, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would. Use this as a fast way to display strings only.
+Draws a string of characters at the given position with the given front and outline color using n2DLib's built-in font. Does clipping and supports newlines with \n. When \n is encountered in the string, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would. Use this as a fast way to display strings only.
 
-- ```C
-  void drawStringF(int *x, int *y, int margin, unsigned short fc, unsigned short olc, const char *s, ...)
-  ```
+```C
+void drawStringF(int *x, int *y, int margin, unsigned short fc, unsigned short olc, const char *s, ...)
+```
 
-  Draws a string of characters at the given position with the given front and outline color using n2DLib's built-in font. Does clipping and supports newlines with \n and printf-like arguments. When \n is encountered in the string, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would.
-  
-- ```C
-  int stringWidth(const char* s)
-  ```
-  
-  Returns the width of the string in pixels when using n2DLib's built-in font.
-  
-- ```C
-  int numberWitdh(int n)
-  ```
-  
-  Returns the width of the decimal in pixels when drawn to the screen using n2DLib's built-in font.
+Draws a string of characters at the given position with the given front and outline color using n2DLib's built-in font. Does clipping and supports newlines with \n and printf-like arguments. When \n is encountered in the string, the function resets the X value to the passed margin value and Y goes to newline. X and Y are modified like a cursor position would.
+
+```C
+int stringWidth(const char* s)
+```
+
+Returns the width of the string in pixels when using n2DLib's built-in font.
+
+```C
+int numberWitdh(int n)
+```
+
+Returns the width of the decimal in pixels when drawn to the screen using n2DLib's built-in font.
 
 
 MATH ROUTINES
 =============
 
-- ```C
-  Type clamp(Type x, Type lowerBound, Type upperBound)
-  ```
+```C
+Type clamp(Type x, Type lowerBound, Type upperBound)
+```
 
-  Returns x if it's in the interval formed by [lowerBound, upperBound], else returns the corresponding bound.
+Returns x if it's in the interval formed by [lowerBound, upperBound], else returns the corresponding bound.
 
-- ```C
-  Fixed fixcos(Fixed angle)
-  ```
+```C
+Fixed fixcos(Fixed angle)
+```
 
-  Returns the cosinus of a binary angle in fixed-point format.
+Returns the cosinus of a binary angle in fixed-point format.
 
-- ```C
-  Fixed fixdiv(Fixed a, Fixed b)
-  ```
+```C
+Fixed fixdiv(Fixed a, Fixed b)
+```
 
-  Performs a division between two fixed-point numbers.
+Performs a division between two fixed-point numbers.
 
-- ```C
-  Fixed fixmul(Fixed a, Fixed b)
-  ```
+```C
+Fixed fixmul(Fixed a, Fixed b)
+```
 
-  Performs a multiplication between two fixed-point numbers.
+Performs a multiplication between two fixed-point numbers.
 
-- ```C
-  Fixed fixsin(Fixed angle)
-  ```
+```C
+Fixed fixsin(Fixed angle)
+```
 
-  Returns the sinus of a binary angle in fixed-point format.
+Returns the sinus of a binary angle in fixed-point format.
 
-- ```C
-  int fixtoi(Fixed f)
-  ```
+```C
+int fixtoi(Fixed f)
+```
 
-  Turns a fixed-point number into an integer.
+Turns a fixed-point number into an integer.
 
-- ```C
-  Fixed itofix(int i)
-  ```
+```C
+Fixed itofix(int i)
+```
 
-  Turns an integer into a fixed-point number.
+Turns an integer into a fixed-point number.
 
-- ```C
-  void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out)
-  ```
+```C
+void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out)
+```
 
-  Rotates a point on the 2D plane given ca the cosinus of the rotation angle and sa the sinus of the rotation angle. This takes x and y as separate arguments and writes the two resulting coordinates to Rect* out.
+Rotates a point on the 2D plane given ca the cosinus of the rotation angle and sa the sinus of the rotation angle. This takes x and y as separate arguments and writes the two resulting coordinates to Rect* out.
 
-- ```C
-  int sign(x)
-  ```
-  
-  Returns 1 if x is negative, 0 otherwise.
+```C
+int sign(x)
+```
+
+Returns 1 if x is negative, 0 otherwise.
 
 KEY DETECTION FUNCTIONS
 =======================
 
-- ```C
-  int get_key_pressed(t_key* report)
-  ```
+```C
+int get_key_pressed(t_key* report)
+```
 
-  Detects if any key is being pressed ; if so, fills report with the corresponding data and returns 1. If no key is being pressed, fills report with _KEY_DUMMY and returns 0. NOTE : this doesn't detect the touchpad's arrow keys.
+Detects if any key is being pressed ; if so, fills report with the corresponding data and returns 1. If no key is being pressed, fills report with _KEY_DUMMY and returns 0. NOTE : this doesn't detect the touchpad's arrow keys.
 
-- ```C
-  int isKey(t_key k1, t_key k2)
-  ```
+```C
+int isKey(t_key k1, t_key k2)
+```
 
-  Returns 1 if both keys match, or 0 if they don't. NOTE : this is very useful for example when comparing a key that has been filled with get_key_pressed() with an Ndless KEY_NSPIRE_ constant.
+Returns 1 if both keys match, or 0 if they don't. NOTE : this is very useful for example when comparing a key that has been filled with get_key_pressed() with an Ndless KEY_NSPIRE_ constant.
