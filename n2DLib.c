@@ -89,10 +89,12 @@ Fixed fixcos(Fixed angle)
 	return cosLUT[angle & 0xff];
 }
 
-void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out)
+inline void rotate(int x, int y, int cx, int cy, Fixed angle, Rect* out)
 {
-	out->x = fixtoi(fixmul(itofix(x), ca) + fixmul(itofix(y), sa));
-	out->y = fixtoi(fixmul(itofix(x), -sa) + fixmul(itofix(y), ca));
+	x -= cx;
+	y -= cy;
+	out->x = fixtoi(fixmul(itofix(x), fixcos(angle)) + fixmul(itofix(y), fixsin(angle))) + cx;
+	out->y = fixtoi(fixmul(itofix(x), -fixsin(angle)) + fixmul(itofix(y), fixcos(angle))) + cy;
 }
 
 inline int sq(int x)
@@ -287,10 +289,10 @@ void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect*
 		rc = defaultRect;
 	}
 	
-	rotate(-rc->x, -rc->y, dX, dY, &upleft);
-	rotate(source[0] - rc->x, -rc->y, dX, dY, &upright);
-	rotate(-rc->x, source[1] - rc->y, dX, dY, &downleft);
-	rotate(source[0] - rc->x, source[1] - rc->y, dX, dY, &downright);
+	rotate(-rc->x, -rc->y, 0, 0, angle, &upleft);
+	rotate(source[0] - rc->x, -rc->y, 0, 0, angle, &upright);
+	rotate(-rc->x, source[1] - rc->y, 0, 0, angle, &downleft);
+	rotate(source[0] - rc->x, source[1] - rc->y, 0, 0, angle, &downright);
 	
 	fr.x = min(min(min(upleft.x, upright.x), downleft.x), downright.x) + sr->x;
 	fr.y = min(min(min(upleft.y, upright.y), downleft.y), downright.y) + sr->y;
@@ -299,8 +301,11 @@ void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect*
 	
 	Rect cp, lsp, cdrp;
 	
-	lsp.x = fixmul(itofix(fr.x - sr->x), dX) + fixmul(itofix(fr.y - sr->y), -dY);
-	lsp.y = fixmul(itofix(fr.x - sr->x), dY) + fixmul(itofix(fr.y - sr->y), dX);
+	// Feed fixed-point to get fixed-point
+	rotate(itofix(fr.x - sr->x), itofix(fr.y - sr->y), 0, 0, -angle, &lsp);
+	
+	//~ lsp.x = fixmul(itofix(fr.x - sr->x), dX) + fixmul(itofix(fr.y - sr->y), -dY);
+	//~ lsp.y = fixmul(itofix(fr.x - sr->x), dY) + fixmul(itofix(fr.y - sr->y), dX);
 	
 	for(cp.y = fr.y; cp.y <= fr.h; cp.y++)
 	{

@@ -25,7 +25,7 @@ extern "C" {
 #endif
 
 extern Fixed fixcos(Fixed angle);
-extern void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out);
+extern void rotate(int x, int y, int cx, int cy, Fixed angle, Rect* out);
 extern int sq(int);
 extern Fixed fixsq(Fixed);
 extern int cube(int);

@@ -263,10 +263,10 @@ Fixed itofix(int i)
 Turns an integer into a fixed-point number.
 
 ```C
-void rotate(int x, int y, Fixed ca, Fixed sa, Rect* out)
+void rotate(int x, int y, int cx, int cy, Fixed angle, Rect* out)
 ```
 
-Rotates a point on the 2D plane given ca the cosinus of the rotation angle and sa the sinus of the rotation angle. This takes x and y as separate arguments and writes the two resulting coordinates to Rect* out.
+Rotates the 2D point (x, y) around the 2D point (cx, cy) by the given angle, and stores the resulting point in Rect* out (w and h not modified).
 
 ```C
 int sign(x)
