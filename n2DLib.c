@@ -89,12 +89,25 @@ Fixed fixcos(Fixed angle)
 	return cosLUT[angle & 0xff];
 }
 
-inline void rotate(int x, int y, int cx, int cy, Fixed angle, Rect* out)
+inline void rotate(int x, int y, int cx, int cy, Fixed angle, Rect *out)
 {
 	x -= cx;
 	y -= cy;
 	out->x = fixtoi(fixmul(itofix(x), fixcos(angle)) + fixmul(itofix(y), fixsin(angle))) + cx;
 	out->y = fixtoi(fixmul(itofix(x), -fixsin(angle)) + fixmul(itofix(y), fixcos(angle))) + cy;
+}
+
+void getBoundingBox(int x, int y, int w, int h, int cx, int cy, Fixed angle, Rect *out)
+{
+	Rect tl, tr, bl, br;
+	rotate(x, y, cx, cy, angle, &tl);
+	rotate(x + w, y, cx, cy, angle, &tr);
+	rotate(x, y + h, cx, cy, angle, &bl);
+	rotate(x + w, y + h, cx, cy, angle, &br);
+	out->x = min(min(min(tl.x, tr.x), bl.x), br.x);
+	out->y = min(min(min(tl.y, tr.y), bl.y), br.y);
+	out->w = max(max(max(tl.x, tr.x), bl.x), br.x) - out->x;
+	out->h = max(max(max(tl.y, tr.y), bl.y), br.y) - out->y;
 }
 
 inline int sq(int x)
@@ -277,7 +290,6 @@ void drawSpriteScaled(const unsigned short* source, const Rect* info)
 void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect* rc, Fixed angle)
 {
 	Rect* defaultRect = NULL;
-	Rect upleft, upright, downleft, downright;
 	Rect fr;
 	unsigned short currentPixel;
 	Fixed dX = fixcos(angle), dY = fixsin(angle);
@@ -289,15 +301,11 @@ void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect*
 		rc = defaultRect;
 	}
 	
-	rotate(-rc->x, -rc->y, 0, 0, angle, &upleft);
-	rotate(source[0] - rc->x, -rc->y, 0, 0, angle, &upright);
-	rotate(-rc->x, source[1] - rc->y, 0, 0, angle, &downleft);
-	rotate(source[0] - rc->x, source[1] - rc->y, 0, 0, angle, &downright);
-	
-	fr.x = min(min(min(upleft.x, upright.x), downleft.x), downright.x) + sr->x;
-	fr.y = min(min(min(upleft.y, upright.y), downleft.y), downright.y) + sr->y;
-	fr.w = max(max(max(upleft.x, upright.x), downleft.x), downright.x) + sr->x;
-	fr.h = max(max(max(upleft.y, upright.y), downleft.y), downright.y) + sr->y;
+	getBoundingBox(-rc->x, -rc->y, source[0], source[1], 0, 0, angle, &fr);
+	fr.x += sr->x;
+	fr.y += sr->y;
+	fr.w += fr.x;
+	fr.h += fr.y;
 	
 	Rect cp, lsp, cdrp;
 	

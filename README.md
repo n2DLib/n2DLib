@@ -257,6 +257,16 @@ int fixtoi(Fixed f)
 Turns a fixed-point number into an integer.
 
 ```C
+void getBoundingBox(int x, int y, int w, int h, int cx, int cy, Fixed angle, Rect *out)
+```
+
+Calculates the bounds of the box that has the following properties :
+- Has top-left corner at coordinates (x, y)
+- Has width w and height h
+- Rotates by a given angle around the point (cx, cy)
+Writes the resulting box in "out". The resulting box is the smallest straight rectangle that contains all points of the input.
+
+```C
 Fixed itofix(int i)
 ```
 
@@ -266,7 +276,7 @@ Turns an integer into a fixed-point number.
 void rotate(int x, int y, int cx, int cy, Fixed angle, Rect* out)
 ```
 
-Rotates the 2D point (x, y) around the 2D point (cx, cy) by the given angle, and stores the resulting point in Rect* out (w and h not modified).
+Rotates the 2D point (x, y) around the 2D point (cx, cy) by the given angle, and stores the resulting point in "out" (w and h not modified).
 
 ```C
 int sign(x)

@@ -26,6 +26,7 @@ extern "C" {
 
 extern Fixed fixcos(Fixed angle);
 extern void rotate(int x, int y, int cx, int cy, Fixed angle, Rect* out);
+extern void getBoundingBox(int x, int y, int w, int h, int cx, int cy, Fixed angle, Rect *out);
 extern int sq(int);
 extern Fixed fixsq(Fixed);
 extern int cube(int);
