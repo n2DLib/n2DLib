@@ -22,6 +22,8 @@ vpath %.tns $(DISTDIR)
 
 all: $(EXE)
 
+lib: $(OBJS)
+
 %.o: %.c
 	$(GCC) $(GCCFLAGS) -c $<
 
