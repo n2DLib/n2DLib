@@ -1,5 +1,7 @@
 #include "n2DLib.h"
 
+#define UNUSED(var) (void)var
+
 static unsigned short sprite[] = {
     0x0010,0x0010,0xf81f, // width, height, transparent color
 	0xf81f,0xf81f,0xf81f,0xf81f,0xf81f,0x0000,
@@ -32,8 +34,9 @@ static unsigned short sprite[] = {
 
 int main(int argc, char *argv[])
 {
+	UNUSED(argc);
+	UNUSED(argv);
 	Fixed theta = 0;
-	//~ Rect spr, nullRect = {sprite[0] / 2, sprite[1] / 2, 0, 0};
 	Rect spr, nullRect = {0, 0, 0, 0};
 	int x, y;
 	

@@ -2,6 +2,10 @@
 #define INCLUDE_GRAFX
 
 #include <os.h>
+#include <stdarg.h>
+
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
 
 typedef int Fixed;
 typedef struct

@@ -1,44 +1,51 @@
 DEBUG = FALSE
+
 GCC = nspire-gcc
-AS = nspire-as
-GXX=nspire-g++
-LD = nspire-ld-bflt
+AS  = nspire-as
+GXX = nspire-g++
+LD  = nspire-ld
+GENZEHN = genzehn
+
 GCCFLAGS = -Wall -W -marm
 LDFLAGS =
+ZEHNFLAGS = --name "example"
+
 ifeq ($(DEBUG),FALSE)
 	GCCFLAGS += -Os
 else
 	GCCFLAGS += -O0 -g
-	LDFLAGS += --debug
 endif
-CPPOBJS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
-OBJS = $(patsubst %.c,%.o,$(wildcard *.c)) $(patsubst %.S,%.o,$(wildcard *.S)) $(CPPOBJS)
-ifneq ($(strip $(CPPOBJS)),)
-	LDFLAGS += --cpp
-endif
-EXE = n2DLib_example.tns
+
+OBJS = $(patsubst %.c, %.o, $(shell find . -name \*.c))
+OBJS += $(patsubst %.cpp, %.o, $(shell find . -name \*.cpp))
+OBJS += $(patsubst %.S, %.o, $(shell find . -name \*.S))
+EXE = example
 DISTDIR = .
 vpath %.tns $(DISTDIR)
+vpath %.elf $(DISTDIR)
 
-all: $(EXE)
-
-lib: $(OBJS)
+all: $(EXE).prg.tns
 
 %.o: %.c
-	$(GCC) $(GCCFLAGS) -c $<
+	$(GCC) $(GCCFLAGS) -c $< -o $@
 
 %.o: %.cpp
-	$(GXX) $(GCCFLAGS) -c $<
+	$(GXX) $(GCCFLAGS) -c $< -o $@
 	
 %.o: %.S
-	$(AS) -c $<
+	$(AS) -c $< -o $@
 
-$(EXE): $(OBJS)
+$(EXE).elf: $(OBJS)
 	mkdir -p $(DISTDIR)
 	$(LD) $^ -o $(DISTDIR)/$@ $(LDFLAGS)
-ifeq ($(DEBUG),FALSE)
-	@rm -f $(DISTDIR)/*.gdb
-endif
+
+$(EXE).tns: $(EXE).elf
+	$(GENZEHN) --input $(DISTDIR)/$^ --output $(DISTDIR)/$@ $(ZEHNFLAGS)
+
+$(EXE).prg.tns: $(EXE).tns
+	make-prg $(DISTDIR)/$^ $(DISTDIR)/$@
+	
+lib: $(OBJS)
 
 clean:
-	rm -f *.o *.elf $(DISTDIR)/*.gdb $(DISTDIR)/$(EXE)
+	rm -f $(OBJS) $(DISTDIR)/$(EXE).tns $(DISTDIR)/$(EXE).elf $(DISTDIR)/$(EXE).prg.tns
