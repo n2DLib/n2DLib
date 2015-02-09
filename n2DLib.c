@@ -10,7 +10,6 @@ extern "C" {
  *             */
 
 unsigned short *BUFF_BASE_ADDRESS, *ALT_SCREEN_BASE_ADDRESS, *INV_BUFF, *temp;
-unsigned short *BUFF_ORIGINAL; // take care of aligning the buffer to 8 bytes
 void *SCREEN_BACKUP;
 int swapped = 0;
 
@@ -25,8 +24,8 @@ void initBuffering()
 	if(is_classic)
 		*(int32_t*)(0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x08;
 	
-	BUFF_ORIGINAL = (unsigned short*)malloc(BUFF_BYTES_SIZE + 8);
-	if(!BUFF_ORIGINAL)
+	ALT_SCREEN_BASE_ADDRESS = (unsigned short*)malloc(BUFF_BYTES_SIZE + 8);
+	if(!ALT_SCREEN_BASE_ADDRESS)
 	{
 		free(BUFF_BASE_ADDRESS);
 		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
@@ -34,11 +33,10 @@ void initBuffering()
 		exit(0);
 	}
 	
-	ALT_SCREEN_BASE_ADDRESS = (int)BUFF_ORIGINAL % 8 ? BUFF_ORIGINAL + 8 - ((int)BUFF_ORIGINAL % 8) : BUFF_ORIGINAL;
 	INV_BUFF = (unsigned short*)malloc(BUFF_BYTES_SIZE);
 	if(!INV_BUFF)
 	{
-		free(BUFF_ORIGINAL);
+		free(ALT_SCREEN_BASE_ADDRESS);
 		free(BUFF_BASE_ADDRESS);
 		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
 		*(void**)0xC0000010 = SCREEN_BACKUP;
@@ -93,7 +91,7 @@ void deinitBuffering()
 		INV_BUFF = temp;
 	}
 	free(INV_BUFF);
-	free(BUFF_ORIGINAL);
+	free(ALT_SCREEN_BASE_ADDRESS);
 	free(BUFF_BASE_ADDRESS);
 }
 
