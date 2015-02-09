@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
 	UNUSED(argv);
 	Fixed theta = 0;
 	Rect spr, nullRect = {0, 0, 0, 0};
+	
 	int x, y;
 	
 	initBuffering();

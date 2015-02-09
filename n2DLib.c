@@ -193,6 +193,26 @@ unsigned timer_read(unsigned timer)
  *  Maths  *
  *         */
 
+ /*
+Example:
+2.5 * 3.5 :
+	xdec = 128
+	ydec = 128
+	xint = 2
+	yint = 3
+2.5 * 3 = 8.75 :
+	rdec = 192
+	rint = 8
+*/
+ 
+inline Fixed fixmul(Fixed x, Fixed y)
+{
+	// x = (xint << 8)+ xdec, y = (yint << 8)+ ydec
+	Fixed xdec = x & 0xff, ydec = y & 0xff, xint = x >> 8, yint = y >> 8;
+	// Like (x * y) >> 8 ; a bit slower but without any risk of overflow (noticeable when squaring and cubing)
+	return ((xint * yint) << 8) + xint * ydec + xdec * yint + ((xdec * ydec) >> 8);
+}
+ 
 Fixed fixcos(Fixed angle)
 {
 	static Fixed cosLUT[] = { 256, 255, 255, 255, 254, 254, 253, 252, 251, 249, 248, 246, 244, 243, 241, 238, 236, 234, 231, 228, 225, 222, 219, 216, 212, 209, 205, 201, 197, 193, 189, 185, 181, 176, 171, 167, 162, 157, 152, 147, 142, 136, 131, 126, 120, 115, 109, 103, 97, 92, 86, 80, 74, 68, 62, 56, 49, 43, 37, 31, 25, 18, 12, 6, 0, -6, -12, -18, -25, -31, -37, -43, -49, -56, -62, -68, -74, -80, -86, -92, -97, -103, -109, -115, -120, -126, -131, -136, -142, -147, -152, -157, -162, -167, -171, -176, -181, -185, -189, -193, -197, -201, -205, -209, -212, -216, -219, -222, -225, -228, -231, -234, -236, -238, -241, -243, -244, -246, -248, -249, -251, -252, -253, -254, -254, -255, -255, -255, -256, -255, -255, -255, -254, -254, -253, -252, -251, -249, -248, -246, -244, -243, -241, -238, -236, -234, -231, -228, -225, -222, -219, -216, -212, -209, -205, -201, -197, -193, -189, -185, -181, -176, -171, -167, -162, -157, -152, -147, -142, -136, -131, -126, -120, -115, -109, -103, -97, -92, -86, -80, -74, -68, -62, -56, -49, -43, -37, -31, -25, -18, -12, -6, 0, 6, 12, 18, 25, 31, 37, 43, 49, 56, 62, 68, 74, 80, 86, 92, 97, 103, 109, 115, 120, 126, 131, 136, 142, 147, 152, 157, 162, 167, 171, 176, 181, 185, 189, 193, 197, 201, 205, 209, 212, 216, 219, 222, 225, 228, 231, 234, 236, 238, 241, 243, 244, 246, 248, 249, 251, 252, 253, 254, 254, 255, 255, 255 };
@@ -261,8 +281,9 @@ void clearBufferW()
 void clearBuffer(unsigned short c)
 {
 	int i;
-	for(i = 0; i < BUFF_BYTES_SIZE / 2; i++)
-			*((unsigned short*)BUFF_BASE_ADDRESS + i) = c;
+	unsigned int ci = (c << 16) | c;
+	for(i = 0; i < 160 * 240; i++)
+			*((unsigned int*)BUFF_BASE_ADDRESS + i) = ci;
 }
 
 inline unsigned short getPixel(const unsigned short *src, unsigned int x, unsigned int y)
@@ -422,9 +443,6 @@ void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect*
 	// Feed fixed-point to get fixed-point
 	rotate(itofix(fr.x - sr->x), itofix(fr.y - sr->y), 0, 0, -angle, &lsp);
 	
-	//~ lsp.x = fixmul(itofix(fr.x - sr->x), dX) + fixmul(itofix(fr.y - sr->y), -dY);
-	//~ lsp.y = fixmul(itofix(fr.x - sr->x), dY) + fixmul(itofix(fr.y - sr->y), dX);
-	
 	for(cp.y = fr.y; cp.y <= fr.h; cp.y++)
 	{
 		cdrp.x = lsp.x;
@@ -434,14 +452,11 @@ void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect*
 		{
 			if(cp.x >= 0 && cp.x < 320 && cp.y >= 0 && cp.y < 240)
 			{
-				//~ if(abs(fixtoi(cdrp.x)) <= source[0] / 2 && abs(fixtoi(cdrp.y)) <= source[1] / 2)
-				//~ {
-					currentPixel = getPixel(source, fixtoi(cdrp.x) + rc->x, fixtoi(cdrp.y) + rc->y);
-					if(currentPixel != source[2])
-					{
-						setPixelUnsafe(cp.x, cp.y, currentPixel);
-					}
-				//~ }
+				currentPixel = getPixel(source, fixtoi(cdrp.x) + rc->x, fixtoi(cdrp.y) + rc->y);
+				if(currentPixel != source[2])
+				{
+					setPixelUnsafe(cp.x, cp.y, currentPixel);
+				}
 			}
 			cdrp.x += dX;
 			cdrp.y += dY;
@@ -482,31 +497,31 @@ void drawLine(int x1, int y1, int x2, int y2, unsigned short c)
 	}
 }
 
-void drawPolygon(unsigned short c, int nombreDePoints, ...)
-// r, g, b, <number of points you want (4 for a square, for instance, not 8 because of x and y...)>, <x1,y1,x2,y2...>
+void drawPolygon(unsigned short c, int pointsNb, ...)
+// color, <number of points you want (4 for a square, for instance, not 8 because of x and y...)>, <x1,y1,x2,y2...>
 {
 	// the number of arguments in the <...> must be even
 	int i;
-	int* pointsList = (int*)malloc(nombreDePoints*2*sizeof(int));
+	int *pointsList = (int *)malloc(pointsNb * 2 * sizeof(int));
 	
 	if (!pointsList) return;
 	
 	va_list ap;
 	int cur_arg = 1;
 
-	va_start(ap, nombreDePoints);
+	va_start(ap, pointsNb);
 	
-	for (i = 0; i < nombreDePoints*2; i++)
+	for (i = 0; i < pointsNb * 2; i++)
 	{
 		cur_arg = va_arg(ap, int);
 		*(pointsList + i) = cur_arg;
 	}
 	
-	for (i = 0; i < nombreDePoints*2 - 2; i+=2)
+	for (i = 0; i < pointsNb * 2 - 2; i += 2)
 	{
 		drawLine(*(pointsList + i), *(pointsList + i + 1), *(pointsList + i + 2), *(pointsList + i + 3), c);
 	}
-	drawLine(*(pointsList + nombreDePoints*2 - 2), *(pointsList + nombreDePoints*2 - 1), *(pointsList), *(pointsList + 1), c);
+	drawLine(*(pointsList + pointsNb*2 - 2), *(pointsList + pointsNb*2 - 1), *(pointsList), *(pointsList + 1), c);
 	va_end(ap);
 	free(pointsList);
 }

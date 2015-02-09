@@ -18,7 +18,6 @@ typedef struct
 
 #define itofix(x) ((x) << 8)
 #define fixtoi(x) ((x) >> 8)
-#define fixmul(x, y) ((x)*  (y) >> 8)
 #define fixdiv(x, y) (((x) << 8) / (y))
 #define clamp(x, a, b) min(max(x, a), b)
 #define sign(x) ((x) < 0)
@@ -28,6 +27,7 @@ typedef struct
 extern "C" {
 #endif
 
+extern Fixed fixmul(Fixed x, Fixed y);
 extern Fixed fixcos(Fixed angle);
 extern void rotate(int x, int y, int cx, int cy, Fixed angle, Rect* out);
 extern void getBoundingBox(int x, int y, int w, int h, int cx, int cy, Fixed angle, Rect *out);
