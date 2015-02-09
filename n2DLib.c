@@ -418,17 +418,13 @@ void drawSpriteScaled(const unsigned short* source, const Rect* info)
 
 void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect* rc, Fixed angle)
 {
-	Rect* defaultRect = NULL;
+	Rect defaultRect = { source[0] / 2, source[1] / 2, 0, 0 };
 	Rect fr;
 	unsigned short currentPixel;
 	Fixed dX = fixcos(angle), dY = fixsin(angle);
 	
 	if(rc == NULL)
-	{
-		defaultRect->x = source[0] / 2;
-		defaultRect->y = source[1] / 2;
-		rc = defaultRect;
-	}
+		rc = &defaultRect;
 	
 	getBoundingBox(-rc->x, -rc->y, source[0], source[1], 0, 0, angle, &fr);
 	fr.x += sr->x;
