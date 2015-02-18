@@ -35,6 +35,8 @@ extern int sq(int);
 extern Fixed fixsq(Fixed);
 extern int cube(int);
 extern Fixed fixcube(Fixed);
+extern int interpolatePathFixed(Fixed[], Fixed[], int[], int, Rect*);
+extern int interpolatePathFloat(float[], float[], int[], int, Rect*);
 
 extern void initBuffering();
 extern void updateScreen();

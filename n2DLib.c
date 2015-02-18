@@ -258,6 +258,84 @@ inline Fixed fixcube(Fixed x)
 	return fixmul(fixmul(x, x), x);
 }
 
+Fixed *pathX, *pathY;
+int *pathT;
+int curT;
+int nbPts;
+// Uses Lagrange's interpolation polynomial
+// Returns whether or not the curve reached the last point
+// Uses n2DLib's fixed-point numbers, very fast but not very accurate
+int interpolatePathFixed(Fixed _x[], Fixed _y[], int _t[], int nb, Rect *out)
+{
+	static int init = 1;
+	int factor, rx = 0, ry = 0;
+	int i, j;
+	if(init)
+	{
+		pathX = _x; pathY = _y; pathT = _t;
+		curT = 0;
+		init = 0;
+		nbPts = nb;
+	}
+	// One polynomial gives X, the other gives Y
+	// Both are a function of T
+	for(i = 0; i < nbPts; i++)
+	{
+		factor = itofix(1);
+		for(j = 0; j < nbPts; j++)
+			if(i != j)
+				factor = fixdiv(fixmul(factor, itofix(curT - pathT[j])), itofix(pathT[i] - pathT[j]));
+		rx += fixmul(itofix(pathX[i]), factor);
+		ry += fixmul(itofix(pathY[i]), factor);
+	}
+	
+	out->x = fixtoi(rx);
+	out->y = fixtoi(ry);
+	if(curT == pathT[nbPts - 1])
+	{
+		init = 1;
+		return 1;
+	}
+	curT++;
+	return 0;
+}
+
+float *fpathX, *fpathY;
+// Same with C floats, much slower but much more accurate
+int interpolatePathFloat(float _x[], float _y[], int _t[], int nb, Rect *out)
+{
+	static int init = 1;
+	float factor, rx = 0., ry = 0.;
+	int i, j;
+	if(init)
+	{
+		fpathX = _x; fpathY = _y; pathT = _t;
+		curT = 0;
+		init = 0;
+		nbPts = nb;
+	}
+	
+	for(i = 0; i < nbPts; i++)
+	{
+		factor = 1.;
+		for(j = 0; j < nbPts; j++)
+			if(i != j)
+				factor = factor * (curT - pathT[j]) / (pathT[i] - pathT[j]);
+		rx += fpathX[i] * factor;
+		ry += fpathY[i] * factor;
+	}
+	
+	out->x = (int)rx;
+	out->y = (int)ry;
+	if(curT == pathT[nbPts - 1])
+	{
+		init = 1;
+		return 1;
+	}
+	curT++;
+	return 0;
+}
+
 /*            *
  *  Graphics  *
  *            */

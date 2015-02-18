@@ -38,20 +38,29 @@ int main(int argc, char *argv[])
 	UNUSED(argv);
 	Fixed theta = 0;
 	Rect spr, nullRect = {0, 0, 0, 0};
+	Rect pt1, pt2;
+	Fixed ax[] = { 300, 260, 220, 280 }, ay[] = { 10, 120 , 30, 80 }, at[] = { 0, 16, 24, 36 };
+	float fax[] = { 200., 160., 120., 180. }, fay[] = { 10., 120. , 30., 80. };
 	
-	int x, y;
+	int x, y, i;
 	
 	initBuffering();
 	clearBufferB();
-	updateScreen();
 	
 	spr.x = 160;
 	spr.y = 120;
 	
 	t_key quitKey;
 	
+	x = y = 0;
+	
+	drawString(&x, &y, 0, "What key to exit the program ?", 0xffff, 0);
+	updateScreen();
+	
 	while(!get_key_pressed(&quitKey));
 	wait_no_key_pressed();
+	
+	clearBufferB();
 	
 	while(!isKeyPressed(quitKey))
 	{
@@ -87,6 +96,37 @@ int main(int argc, char *argv[])
 		updateScreen();
 	}
 	
+	clearBufferB();
+	
+	wait_no_key_pressed();
+	
+	while(!isKeyPressed(quitKey))
+	{
+		for(i = 0; i < 4; i++)
+		{
+			fillRect(ax[i]-2, ay[i]-2, 5, 5, 0xf800);
+			fillRect(fax[i]-2, fay[i]-2, 5, 5, 0xf800);
+		}
+		
+		interpolatePathFloat(fax, fay, at, 4, &pt1);
+		
+		while(!interpolatePathFloat(fax, fay, at, 4, &pt2))
+		{
+			drawLine(pt1.x, pt1.y, pt2.x, pt2.y, 0x07f0);
+			pt1 = pt2;
+		}
+		drawLine(pt1.x, pt1.y, pt2.x, pt2.y, 0x07f0);
+		
+		interpolatePathFixed(ax, ay, at, 4, &pt1);
+		
+		while(!interpolatePathFixed(ax, ay, at, 4, &pt2))
+		{
+			drawLine(pt1.x, pt1.y, pt2.x, pt2.y, 0xffff);
+			pt1 = pt2;
+		}
+		drawLine(pt1.x, pt1.y, pt2.x, pt2.y, 0xffff);
+		updateScreen();
+	}
 	deinitBuffering();
 	
 	return 0;

@@ -267,6 +267,18 @@ Calculates the bounds of the box that has the following properties :
 Writes the resulting box in "out". The resulting box is the smallest straight rectangle that contains all points of the input.
 
 ```C
+int interpolatePathFixed(Fixed x[], Fixed y[], int t[], int nbPoints, Rect *out)
+```
+
+Given arrays of `nbPoints` X coordinates, Y coordinates and times, the function generates a curve that passes by the given points after the corresponding number of iterations. For every iteration, the calculated coordinates are written to `Rect *out`'s x and y components. The function returns 1 when the last point has been reached by the curve, and 0 otherwise. This version uses n2DLib's fixed point numbers, and thus is very fast but has limited accuracy.
+
+```C
+int interpolatePathFloat(float x[], float y[], int t[], int nbPoints, Rect *out)
+```
+
+Given arrays of `nbPoints` X coordinates, Y coordinates and times, the function generates a curve that passes by the given points after the corresponding number of iterations. For every iteration, the calculated coordinates are written to `Rect *out`'s x and y components. The function returns 1 when the last point has been reached by the curve, and 0 otherwise. This version uses floating-point numbers, and thus is much slower than `interpolatePathFixed` but has far better accuracy.
+
+```C
 Fixed itofix(int i)
 ```
 
