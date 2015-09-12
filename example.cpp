@@ -88,8 +88,8 @@ int main(int argc, char *argv[])
 		
 		spr.w = theta / 2;
 		spr.h = theta / 2;
-		drawSpriteScaled(sprite, &spr);
-		drawSpriteRotated(sprite, &spr, &nullRect, theta);
+		drawSpriteScaled(sprite, &spr, 0, 0); // don't flash
+		drawSpriteRotated(sprite, &spr, &nullRect, theta, theta < 128, 0xffff); // occasionally flash
 		theta++;
 		theta &= 255;
 		

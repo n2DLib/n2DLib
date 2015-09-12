@@ -442,7 +442,7 @@ void fillRect(int x, int y, int w, int h, unsigned short c)
 	}
 }
 
-void drawSprite(const unsigned short *src, int _x, int _y)
+void drawSprite(const unsigned short *src, int _x, int _y, int flash, unsigned short flashColor)
 {
 	int x, y, w = src[0] + _x, h = src[1] + _y, c = 3;
 	for(y = _y; y < h; y++)
@@ -450,13 +450,13 @@ void drawSprite(const unsigned short *src, int _x, int _y)
 		for(x = _x; x < w; x++, c++)
 		{
 			if(src[c] != src[2])
-				setPixel(x, y, src[c]);
+				setPixel(x, y, flash ? flashColor : src[c]);
 		}
 		if(y > 239) break;
 	}
 }
 
-void drawSpritePart(const unsigned short *src, int _x, int _y, const Rect* part)
+void drawSpritePart(const unsigned short *src, int _x, int _y, const Rect* part, int flash, unsigned short flashColor)
 {
 	unsigned short c;
 	int x, y, w = part->w + _x, h = part->h + _y, z = part->x, t = part->y;
@@ -466,14 +466,14 @@ void drawSpritePart(const unsigned short *src, int _x, int _y, const Rect* part)
 		{
 			c = getPixel(src, z, t);
 			if(c != src[2])
-				setPixel(x, y, c);
+				setPixel(x, y, flash ? flashColor : c);
 			if(x > 319) break;
 		}
 		if(y > 239) break;
 	}
 }
 
-void drawSpriteScaled(const unsigned short* source, const Rect* info)
+void drawSpriteScaled(const unsigned short* source, const Rect* info, int flash, unsigned short flashColor)
 {
 	Fixed dx = itofix(source[0]) / info->w;
 	Fixed dy = itofix(source[1]) / info->h;
@@ -487,14 +487,14 @@ void drawSpriteScaled(const unsigned short* source, const Rect* info)
 		{
 			c = getPixel(source, fixtoi(tx), fixtoi(ty));
 			if(c != source[2])
-				setPixel(x, y, c);
+				setPixel(x, y, flash ? flashColor : c);
 			if(x > 319) break;
 		}
 		if(y > 239) break;
 	}
 }
 
-void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect* rc, Fixed angle)
+void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect* rc, Fixed angle, int flash, unsigned short flashColor)
 {
 	Rect defaultRect = { source[0] / 2, source[1] / 2, 0, 0 };
 	Rect fr;
@@ -527,7 +527,7 @@ void drawSpriteRotated(const unsigned short* source, const Rect* sr, const Rect*
 				currentPixel = getPixel(source, fixtoi(cdrp.x) + rc->x, fixtoi(cdrp.y) + rc->y);
 				if(currentPixel != source[2])
 				{
-					setPixelUnsafe(cp.x, cp.y, currentPixel);
+					setPixelUnsafe(cp.x, cp.y, flash ? flashColor : currentPixel);
 				}
 			}
 			cdrp.x += dX;
