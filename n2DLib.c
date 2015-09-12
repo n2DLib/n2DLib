@@ -842,6 +842,61 @@ inline int isKey(t_key k1, t_key k2)
 						: k1.row == k2.row && k1.col == k2.col;
 }
 
+// Loads a 24-bits bitmap image into an n2DLib-compatible unsigned short* array
+unsigned short * loadBMP(const char *path, unsigned short transparency)
+{
+	int size, width, height, offset, i, j;
+	uint16_t *returnValue;
+	FILE *temp = fopen(path, "rb");
+	
+	if(!temp) return NULL;
+	// Check if the file's 2 first char are BM (indicates bitmap)
+	if(!(fgetc(temp) == 0x42 && fgetc(temp) == 0x4d))
+	{
+		printf("Image is not a bitmap\n");
+		fclose(temp);
+		return NULL;
+	}
+	
+	// Check if the file is in 24 bpp
+	fseek(temp, 0x1c, SEEK_SET);
+	if(fgetc(temp) != 24)
+	{
+		printf("Wrong format : bitmap must use 24 bpp\n");
+		fclose(temp);
+		return NULL;
+	}
+	
+	// Get the 4-bytes pixel width and height, situated respectively at 0x12 and 0x16
+	fseek(temp, 0x12, SEEK_SET);
+	width = fgetc(temp) | (fgetc(temp) << 8) | (fgetc(temp) << 16) | (fgetc(temp) << 24);
+	fseek(temp, 0x16, SEEK_SET);
+	height = fgetc(temp) | (fgetc(temp) << 8) | (fgetc(temp) << 16) | (fgetc(temp) << 24);
+	size = width * height + 3; // include header
+	
+	// Gets the 4-bytes offset to the start of the pixel table, situated at 0x0a
+	fseek(temp, 0x0a, SEEK_SET);
+	offset = fgetc(temp) | (fgetc(temp) << 8) | (fgetc(temp) << 16) | (fgetc(temp) << 24);
+	
+	fseek(temp, offset, SEEK_SET);
+	
+	returnValue = malloc(size * sizeof(unsigned short));
+	if(!returnValue)
+	{
+		printf("Couldn't allocate memory\n");
+		fclose(temp);
+		return NULL;
+	}
+	returnValue[0] = width;
+	returnValue[1] = height;
+	returnValue[2] = transparency;
+	for(j = height - 1; j >= 0; j--)
+		for(i = 0; i < width; i++)
+			returnValue[j * width + i + 3] = (unsigned short)((fgetc(temp) >> 3) | ((fgetc(temp) >> 2) << 5) | ((fgetc(temp) >> 3) << 11));
+	fclose(temp);
+	return returnValue;
+}
+
 #ifdef __cplusplus
 }
 #endif

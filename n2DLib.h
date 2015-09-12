@@ -1,7 +1,7 @@
 #ifndef INCLUDE_GRAFX
 #define INCLUDE_GRAFX
 
-#include <os.h>
+#include <libndls.h>
 #include <stdarg.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
@@ -71,6 +71,8 @@ extern int numberWidth(int);
 extern int stringWidth(const char*);
 extern int get_key_pressed(t_key*);
 extern int isKey(t_key, t_key);
+
+extern unsigned short * loadBMP(const char*, unsigned short);
 
 #define BUFF_BYTES_SIZE (320*240*2)
 extern unsigned short *BUFF_BASE_ADDRESS;
