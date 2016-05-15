@@ -845,7 +845,7 @@ inline int isKey(t_key k1, t_key k2)
 // Loads a 24-bits bitmap image into an n2DLib-compatible unsigned short* array
 unsigned short * loadBMP(const char *path, unsigned short transparency)
 {
-	int size, width, height, offset, i, j;
+	int size, width, height, offset, i, j, padding;
 	uint16_t *returnValue;
 	FILE *temp = fopen(path, "rb");
 	
@@ -870,7 +870,7 @@ unsigned short * loadBMP(const char *path, unsigned short transparency)
 	// Get the 4-bytes pixel width and height, situated respectively at 0x12 and 0x16
 	fseek(temp, 0x12, SEEK_SET);
 	width = fgetc(temp) | (fgetc(temp) << 8) | (fgetc(temp) << 16) | (fgetc(temp) << 24);
-	fseek(temp, 0x16, SEEK_SET);
+	//fseek(temp, 0x16, SEEK_SET);
 	height = fgetc(temp) | (fgetc(temp) << 8) | (fgetc(temp) << 16) | (fgetc(temp) << 24);
 	size = width * height + 3; // include header
 	
@@ -890,9 +890,17 @@ unsigned short * loadBMP(const char *path, unsigned short transparency)
 	returnValue[0] = width;
 	returnValue[1] = height;
 	returnValue[2] = transparency;
+	padding = 4 - (width * 3 - (width * 3 / 4) * 4);
+	padding %= 4;
 	for(j = height - 1; j >= 0; j--)
+	{
 		for(i = 0; i < width; i++)
 			returnValue[j * width + i + 3] = (unsigned short)((fgetc(temp) >> 3) | ((fgetc(temp) >> 2) << 5) | ((fgetc(temp) >> 3) << 11));
+		// Skip padding for widths that are not a multiple of 4
+		for(i = 0; i < padding; i++)
+			fgetc(temp);
+	}
+		
 	fclose(temp);
 	return returnValue;
 }
