@@ -80,16 +80,18 @@ void updateScreen()
 
 void deinitBuffering()
 {
-	// Handle monochrome screens-specific shit again
-	if(is_classic)
-		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
-	*(void**)(0xC0000010) = SCREEN_BACKUP;
 	if(swapped)
 	{
 		temp = *(void**)0xC0000010;
 		*(void**)0xC0000010 = INV_BUFF;
 		INV_BUFF = temp;
 	}
+	
+	// Handle monochrome screens-specific shit again
+	if(is_classic)
+		*((int32_t*)0xC000001C) = (*((int32_t*)0xC000001C) & ~0x0e) | 0x04;
+	*(void**)(0xC0000010) = SCREEN_BACKUP;
+
 	free(INV_BUFF);
 	free(ALT_SCREEN_BASE_ADDRESS);
 	free(BUFF_BASE_ADDRESS);
